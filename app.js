@@ -1,11 +1,37 @@
 const express = require("express");
 const { config } = require("dotenv");
 const db = require("./models");
+const routes = require("./routes/index");
+const path = require("path");
 
 config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+/******** MIDDLEWARES ********/
+
+// app.use(cors(customCorsOptions));
+
+app.use(express.static(path.join(__dirname, "pulic")));
+
+//* Validate JSON Body
+app.use(
+  express.json({
+    verify: (req, res, buf, encoding) => {
+      try {
+        JSON.parse(buf);
+      } catch (e) {
+        return res.status(400).json({ message: "Please enter a valid JSON" });
+      }
+    },
+  })
+);
+
+app.use(express.urlencoded({ extended: true }));
+
+//* ROUTES
+app.use("/", routes);
 
 app.listen(PORT, () => {
   db.sequelize

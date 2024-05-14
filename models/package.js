@@ -1,52 +1,52 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class package extends Model {
+  class _package extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      package.hasMany(models.booking, { foreignKey: "package_id", onDelete: "SET NULL" });
+      _package.hasMany(models.booking, { foreignKey: "package_id", onDelete: "SET NULL" });
 
-      package.belongsToMany(models.car, {
+      _package.belongsToMany(models.car, {
         through: models.car_package,
         foreignKey: "package_id",
         onDelete: "CASCADE",
       });
     }
   }
-  package.init(
+  _package.init(
     {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
       },
       name: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       details: {
         allowNull: false,
-        type: Sequelize.TEXT("long"),
+        type: DataTypes.TEXT("long"),
       },
       price: {
         allowNull: false,
-        type: Sequelize.DOUBLE,
+        type: DataTypes.DOUBLE,
       },
       deletedAt: {
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
       },
     },
     {
@@ -55,5 +55,5 @@ module.exports = (sequelize, DataTypes) => {
       paranoid: true,
     }
   );
-  return package;
+  return _package;
 };

@@ -6,6 +6,8 @@ const storage = multer.diskStorage({
     let folder = "public/images";
 
     if (req.destination === "airport") folder = "public/images/airport";
+    if (req.destination === "hotel") folder = "public/images/hotel";
+    if (req.destination === "railway_station") folder = "public/images/railway_station";
 
     cb(null, folder);
   },
@@ -15,7 +17,11 @@ const storage = multer.diskStorage({
   },
 });
 
-const fields = [{ name: "airport_image", maxCount: 1 }];
+const fields = [
+  { name: "airport_image", maxCount: 1 },
+  { name: "hotel_image", maxCount: 1 },
+  { name: "railway_station_image", maxCount: 1 },
+];
 
 const upload = multer({
   storage: storage,

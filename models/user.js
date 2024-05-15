@@ -38,6 +38,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BIGINT,
       },
       user_type_id: {
+        defaultValue: 7179,
         type: DataTypes.INTEGER,
       },
       name: {

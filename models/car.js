@@ -30,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
+      description: {
+        defaultValue: "",
+        type: DataTypes.STRING,
+      },
       number_plate: {
         allowNull: false,
         type: DataTypes.STRING,

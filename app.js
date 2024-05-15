@@ -3,6 +3,8 @@ const { config } = require("dotenv");
 const db = require("./models");
 const routes = require("./routes/index");
 const path = require("path");
+const { customCorsOptions } = require("./config/cors");
+const cors = require("cors");
 
 config();
 
@@ -11,9 +13,9 @@ const PORT = process.env.PORT || 5000;
 
 /******** MIDDLEWARES ********/
 
-// app.use(cors(customCorsOptions));
+app.use(cors(customCorsOptions));
 
-app.use(express.static(path.join(__dirname, "pulic")));
+app.use(express.static(path.join(__dirname, "public")));
 
 //* Validate JSON Body
 app.use(

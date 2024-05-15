@@ -13,6 +13,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
+      description: {
+        defaultValue: "",
+        type: Sequelize.STRING,
+      },
       number_plate: {
         allowNull: false,
         type: Sequelize.STRING,

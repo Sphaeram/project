@@ -36,7 +36,6 @@ module.exports = {
   updateRailwayStationById: async (req, res, next) => {
     let image = false;
     const { railwayStationId } = req.query;
-    if (!railwayStationId) return res.status(400).json({ data: "Bad Request" });
 
     const sanitizedFields = sanitizeFields(allowedFields, req.body);
 
@@ -52,8 +51,10 @@ module.exports = {
     }
 
     try {
+      if (!railwayStationId) throw new Error("Bad Request!");
+
       const railway_station = await db.railway_station.findByPk(railwayStationId);
-      if (!railway_station) return res.status(404).json({ data: "No such railway_station found!" });
+      if (!railway_station) throw new Error("No such railway_station found!");
 
       const [rowsAffected] = await db.railway_station.update(sanitizedFields, {
         where: { id: railwayStationId },

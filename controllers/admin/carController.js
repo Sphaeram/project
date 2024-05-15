@@ -33,7 +33,6 @@ module.exports = {
   updateCarById: async (req, res, next) => {
     const { carId } = req.query;
     let image = false;
-    if (!carId) return res.status(400).json({ data: "Bad Request!" });
 
     const sanitizedFields = sanitizeFields(allowedFields, req.body);
 
@@ -45,8 +44,10 @@ module.exports = {
     }
 
     try {
+      if (!carId) throw new Error("Bad Request!");
+
       const car = await db.car.findByPk(carId);
-      if (!car) return res.status(404).json({ data: "No CAr Found!" });
+      if (!car) throw new Error("No Car Found!");
 
       const [rowsAffected] = await db.car.update(sanitizedFields, { where: { id: car.id } });
       if (rowsAffected === 0) return res.status(404).json({ data: "Car Not Updated!" });

@@ -27,7 +27,6 @@ const createAirport = async (req, res, next) => {
 const updateAirport = async (req, res, next) => {
   let image = false;
   const { airportId } = req.query;
-  if (!airportId) return res.status(400).json({ data: "Bad Request" });
 
   const sanitizedFields = sanitizeFields(allowedFields, req.body);
 
@@ -39,8 +38,10 @@ const updateAirport = async (req, res, next) => {
   }
 
   try {
+    if (!airportId) throw new Error("Bad Request!");
+
     const airport = await db.airport.findByPk(airportId);
-    if (!airport) return res.status(404).json({ data: "No such airport found!" });
+    if (!airport) throw new Error("No such airport found!");
 
     const [rowsAffected] = await db.airport.update(sanitizedFields, { where: { id: airportId } });
     if (rowsAffected === 0) return res.status(500).json({ data: "Airport Not Updated!" });

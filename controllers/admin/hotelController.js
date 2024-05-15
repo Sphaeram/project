@@ -28,7 +28,6 @@ module.exports = {
   updateHotelById: async (req, res, next) => {
     let image = false;
     const { hotelId } = req.query;
-    if (!hotelId) return res.status(400).json({ data: "Bad Request" });
 
     const sanitizedFields = sanitizeFields(allowedFields, req.body);
 
@@ -40,8 +39,10 @@ module.exports = {
     }
 
     try {
+      if (!hotelId) throw new Error("Bad Request!");
+
       const hotel = await db.hotel.findByPk(hotelId);
-      if (!hotel) return res.status(404).json({ data: "No such hotel found!" });
+      if (!hotel) throw new Error("No such hotel found!");
 
       const [rowsAffected] = await db.hotel.update(sanitizedFields, { where: { id: hotelId } });
       if (rowsAffected === 0) return res.status(500).json({ data: "Hotel Not Updated!" });

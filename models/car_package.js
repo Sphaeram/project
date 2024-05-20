@@ -19,9 +19,21 @@ module.exports = (sequelize, DataTypes) => {
       },
       car_id: {
         type: DataTypes.BIGINT,
+        references: {
+          model: "cars",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
       },
       package_id: {
         type: DataTypes.BIGINT,
+        references: {
+          model: "packages",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
       },
       deletedAt: {
         type: DataTypes.DATE,

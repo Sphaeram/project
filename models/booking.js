@@ -8,11 +8,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      booking.belongsTo(models.user, {
-        foreignKey: "user_id",
-        onDelete: "SET NULL",
-        onUpdate: "CASCADE",
-      });
+      booking.belongsTo(models.user, { foreignKey: "user_id", onUpdate: "CASCADE" });
       booking.belongsTo(models.coupon, {
         foreignKey: "coupon_id",
         onDelete: "SET NULL",
@@ -36,16 +32,40 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BIGINT,
       },
       user_id: {
+        allowNull: false,
         type: DataTypes.BIGINT,
+        references: {
+          model: "users",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
       },
       coupon_id: {
         type: DataTypes.BIGINT,
+        references: {
+          model: "coupons",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
       },
       car_id: {
         type: DataTypes.BIGINT,
+        references: {
+          model: "cars",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
       },
       package_id: {
         type: DataTypes.BIGINT,
+        references: {
+          model: "packages",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
       },
       pickup_point: {
         type: DataTypes.STRING,
@@ -81,6 +101,10 @@ module.exports = (sequelize, DataTypes) => {
       payment_status: {
         allowNull: false,
         type: DataTypes.TINYINT,
+      },
+      status: {
+        allowNull: false,
+        type: DataTypes.ENUM("pending", "confirmed", "cancelled"),
       },
       deletedAt: {
         type: DataTypes.DATE,

@@ -7,10 +7,16 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.BIGINT,
       },
       user_type_id: {
         type: Sequelize.INTEGER,
+        references: {
+          model: "user_types",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
       },
       name: {
         allowNull: false,

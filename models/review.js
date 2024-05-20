@@ -21,14 +21,16 @@ module.exports = (sequelize, DataTypes) => {
       },
       user_id: {
         type: DataTypes.BIGINT,
+        references: {
+          model: "users",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
       },
       name: {
         allowNull: false,
         type: DataTypes.STRING,
-      },
-      star_rating: {
-        allowNull: false,
-        type: DataTypes.FLOAT,
       },
       review: {
         allowNull: false,

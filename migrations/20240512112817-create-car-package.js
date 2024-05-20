@@ -11,9 +11,21 @@ module.exports = {
       },
       car_id: {
         type: Sequelize.BIGINT,
+        references: {
+          model: "cars",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
       },
       package_id: {
         type: Sequelize.BIGINT,
+        references: {
+          model: "packages",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
       },
       deletedAt: {
         type: Sequelize.DATE,

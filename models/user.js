@@ -14,11 +14,7 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
       });
 
-      user.hasMany(models.booking, {
-        foreignKey: "user_id",
-        onDelete: "SET NULL",
-        onUpdate: "CASCADE",
-      });
+      user.hasMany(models.booking, { foreignKey: "user_id", onUpdate: "CASCADE" });
 
       /***************************************************************/
 
@@ -40,6 +36,12 @@ module.exports = (sequelize, DataTypes) => {
       user_type_id: {
         defaultValue: 7179,
         type: DataTypes.INTEGER,
+        references: {
+          model: "user_types",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
       },
       name: {
         allowNull: false,

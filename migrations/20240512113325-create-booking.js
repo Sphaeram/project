@@ -10,16 +10,41 @@ module.exports = {
         type: Sequelize.BIGINT,
       },
       user_id: {
+        allowNull: false,
         type: Sequelize.BIGINT,
+        references: {
+          model: "users",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
       },
+
       coupon_id: {
         type: Sequelize.BIGINT,
+        references: {
+          model: "coupons",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
       },
       car_id: {
         type: Sequelize.BIGINT,
+        references: {
+          model: "cars",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
       },
       package_id: {
         type: Sequelize.BIGINT,
+        references: {
+          model: "packages",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
       },
       pickup_point: {
         type: Sequelize.STRING,
@@ -55,6 +80,10 @@ module.exports = {
       payment_status: {
         allowNull: false,
         type: Sequelize.TINYINT,
+      },
+      status: {
+        allowNull: false,
+        type: Sequelize.ENUM("pending", "confirmed", "cancelled"),
       },
       deletedAt: {
         type: Sequelize.DATE,

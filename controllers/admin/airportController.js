@@ -89,6 +89,8 @@ const deleteAirport = async (req, res, next) => {
   if (!airportId) return res.status(400).json({ data: "Bad Request" });
 
   try {
+    const airport = await db.airport.findByPk(airportId);
+    if (!airport) return res.status(404).json({ data: "Airport Not Found" });
     await db.airport.destroy({ where: { id: airportId } });
     return res.status(200).json({ data: "Airport Deleted!" });
   } catch (error) {

@@ -92,6 +92,8 @@ module.exports = {
     if (!carId) return res.status(400).json({ data: "Bad Request!" });
 
     try {
+      const car = await db.car.findByPk(carId);
+      if (!car) return res.status(404).json({ data: "No Car Found!" });
       await db.car.destroy({ where: { id: carId } });
       return res.status(200).json({ data: "Car Deleted!" });
     } catch (error) {

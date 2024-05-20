@@ -55,6 +55,8 @@ module.exports = {
     const { packageId } = req.query;
     if (!packageId) return res.status(400).json({ data: "Bad Request!" });
     try {
+      const package = await db.package.findByPk(packageId);
+      if (!package) return res.status(404).json({ data: "No Package Found!" });
       await db.package.destroy({ where: { id: packageId } });
 
       return res.status(200).json({ data: "Package Deleted!" });

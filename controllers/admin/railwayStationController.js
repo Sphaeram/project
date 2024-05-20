@@ -108,6 +108,8 @@ module.exports = {
     if (!railwayStationId) return res.status(400).json({ data: "Bad Request" });
 
     try {
+      const railway_station = await db.railway_station.findByPk(railwayStationId);
+      if (!railway_station) return res.status(404).json({ data: "Railway Station Not Found" });
       await db.railway_station.destroy({ where: { id: railwayStationId } });
       return res.status(200).json({ data: "Railway Station Deleted!" });
     } catch (error) {

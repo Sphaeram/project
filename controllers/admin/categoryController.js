@@ -26,6 +26,7 @@ module.exports = {
   updateCategory: async (req, res, next) => {
     let image = false;
     const { categoryId } = req.query;
+    if (!categoryId) throw new Error("Bad Request!");
 
     const sanitizedFields = sanitizeFields(allowedFields, req.body);
     if (req.files && req.files["category_image"] && req.files["category_image"].length > 0) {
@@ -35,15 +36,13 @@ module.exports = {
       }`;
     }
     try {
-      if (!categoryId) throw new Error("Bad Request!");
-
       const category = await db.category.findByPk(categoryId);
       if (!category) throw new Error("Category Not Found!");
 
       const [rowsAffected] = await db.category.update(sanitizedFields, {
         where: { id: category.id },
       });
-      if (rowsAffected === 0) return res.status(500).json({ data: "Category Not Updated!" });
+      if (rowsAffected === 0) throw new Error("Category Not Updated!");
 
       if (image) deleteLocalFile(path.join(__dirname, `../../public/${category.image}`));
 
@@ -83,6 +82,8 @@ module.exports = {
     const { categoryId } = req.query;
     if (!categoryId) return res.status(400).json({ data: "Bad Request" });
     try {
+      const category = await db.category.findByPk(categoryId);
+      if (!category) return res.status(404).json({ data: "Category Not Found!" });
       await db.category.destroy({ where: { id: categoryId } });
       return res.status(200).json({ data: "Category Deleted!" });
     } catch (error) {

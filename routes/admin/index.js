@@ -7,6 +7,8 @@ const carRouter = require("./carRoutes");
 const carPackageRouter = require("./carPackageRoutes");
 const categoryRouter = require("./categoryRoutes");
 const subCategoryRouter = require("./subCategoryRoutes");
+const userRouter = require("./userRoutes");
+const couponRouter = require("./couponRoutes");
 
 router.use("/airports", airportRouter);
 router.use("/hotels", hotelRouter);
@@ -16,5 +18,7 @@ router.use("/cars", carRouter);
 router.use("/car-packages", carPackageRouter);
 router.use("/categories", categoryRouter);
 router.use("/sub-categories", subCategoryRouter);
+router.use("/users", userRouter);
+router.use("/coupons", couponRouter);
 
 module.exports = router;

@@ -5,6 +5,7 @@ const routes = require("./routes/index");
 const path = require("path");
 const { customCorsOptions } = require("./config/cors");
 const cors = require("cors");
+const morgan = require("morgan");
 
 config();
 
@@ -12,6 +13,8 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 /******** MIDDLEWARES ********/
+
+app.use(morgan("dev"));
 
 app.use(cors(customCorsOptions));
 

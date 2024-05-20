@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      sub_category.belongsTo(models.category, { foreignKey: "category{_id", onDelete: "SET NULL" });
+      sub_category.belongsTo(models.category, { foreignKey: "category_id", onDelete: "SET NULL" });
     }
   }
   sub_category.init(

@@ -4,7 +4,7 @@ const sanitizeFields = (allowedFields, requestBody) => {
   const sanitizedFields = {};
   if (Object.keys(requestBody).length !== 0) {
     allowedFields.map((field) => {
-      if (requestBody[field] !== null || requestBody[field] !== undefined) {
+      if (requestBody[field] !== null && requestBody[field] !== undefined) {
         sanitizedFields[field] = requestBody[field];
       }
     });

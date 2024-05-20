@@ -89,6 +89,8 @@ module.exports = {
     if (!hotelId) return res.status(400).json({ data: "Bad Request" });
 
     try {
+      const hotel = await db.hotel.findByPk(hotelId);
+      if (!hotel) return res.status(404).json({ data: "Hotel Not Found" });
       await db.hotel.destroy({ where: { id: hotelId } });
       return res.status(200).json({ data: "Hotel Deleted!" });
     } catch (error) {

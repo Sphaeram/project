@@ -31,10 +31,22 @@ module.exports = (sequelize, DataTypes) => {
       valid_from: {
         allowNull: false,
         type: DataTypes.DATE,
+        validate: {
+          isDate: {
+            args: true,
+            msg: "Enter a valid Date format (MM-DD-YYYY OR MM/DD/YYYY OR YYYY-MM-DD)",
+          },
+        },
       },
       valid_to: {
         allowNull: false,
         type: DataTypes.DATE,
+        validate: {
+          isDate: {
+            args: true,
+            msg: "Enter a valid Date format (MM-DD-YYYY OR MM/DD/YYYY OR YYYY-MM-DD)",
+          },
+        },
       },
       discount: {
         allowNull: false,

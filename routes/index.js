@@ -1,11 +1,11 @@
 const router = require("express").Router();
 const authRouter = require("./authRoutes");
+const websiteRouter = require("./website/index");
 const adminRouter = require("./admin/index");
 const { verifyAdmin } = require("../middlewares/verify");
 
-router.get("/", (req, res) => res.status(200).send("<center><h1>Welcome!</h1></center>"));
-
 router.use("/auth", authRouter);
 router.use("/admin", verifyAdmin, adminRouter);
+router.use("/", websiteRouter);
 
 module.exports = router;

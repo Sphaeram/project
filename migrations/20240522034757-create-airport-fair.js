@@ -2,12 +2,30 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("railway_stations", {
+    await queryInterface.createTable("airport_fairs", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.BIGINT,
+      },
+      pickup_point: {
+        type: Sequelize.BIGINT,
+        references: {
+          model: "airports",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
+      },
+      drop_point: {
+        type: Sequelize.BIGINT,
+        references: {
+          model: "airports",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
       },
       car_id: {
         type: Sequelize.BIGINT,
@@ -18,20 +36,8 @@ module.exports = {
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       },
-      title: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
-      description: {
-        allowNull: false,
-        type: Sequelize.TEXT("long"),
-      },
-      location: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
-      image: {
-        type: Sequelize.STRING,
+      fair: {
+        type: Sequelize.DOUBLE,
       },
       deletedAt: {
         type: Sequelize.DATE,
@@ -47,6 +53,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("railway_stations");
+    await queryInterface.dropTable("airport_fairs");
   },
 };

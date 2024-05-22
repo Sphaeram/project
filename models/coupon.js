@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       coupon.hasMany(models.booking, { foreignKey: "coupon_id", onDelete: "SET NULL" });
+      coupon.hasMany(models.coupon_collected, { foreignKey: "coupon_id", onDelete: "SET NULL" });
     }
   }
   coupon.init(

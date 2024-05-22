@@ -1,7 +1,6 @@
 const db = require("../../models");
-const { sanitizeFields } = require("../../utils/otherUtils");
 
-const allowedFields = [""];
+const allowedFields = [];
 
 module.exports = {
   createFair: async (req, res, next) => {

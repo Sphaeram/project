@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       });
 
       user.hasMany(models.booking, { foreignKey: "user_id", onUpdate: "CASCADE" });
+      user.hasMany(models.coupon_collected, { foreignKey: "user_id", onUpdate: "CASCADE" });
 
       /***************************************************************/
 

@@ -2,7 +2,7 @@ const db = require("../../models/index");
 const { sanitizeFields, deleteLocalFile } = require("../../utils/otherUtils");
 const path = require("path");
 
-const allowedFields = ["title", "description", "location"];
+const allowedFields = ["car_id", "title", "description", "location"];
 
 const createAirport = async (req, res, next) => {
   const sanitizedFields = sanitizeFields(allowedFields, req.body);

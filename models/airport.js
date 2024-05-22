@@ -8,16 +8,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      airport.hasMany(models.fixed_price, {
-        foreignKey: "source_id",
-        as: "airport_source",
-        onDelete: "SET NULL",
-      });
-      airport.hasMany(models.fixed_price, {
-        foreignKey: "destination_id",
-        as: "airport_destination",
-        onDelete: "SET NULL",
-      });
+      airport.hasMany(models.airport_fair, { foreignKey: "pickup_point", onDelete: "SET NULL" });
+      airport.hasMany(models.airport_fair, { foreignKey: "drop_point", onDelete: "SET NULL" });
+
+      airport.belongsTo(models.car, { foreignKey: "car_id", onDelete: "SET NULL" });
     }
   }
   airport.init(
@@ -27,6 +21,15 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.BIGINT,
+      },
+      car_id: {
+        type: DataTypes.BIGINT,
+        references: {
+          model: "cars",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
       },
       title: {
         allowNull: false,

@@ -1,28 +1,22 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class hotel extends Model {
+  class coupon_collected extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      hotel.hasMany(models.fixed_price, {
-        foreignKey: "source_id",
-        as: "hotel_source",
+      coupon_collected.belongsTo(models.coupon, { foreignKey: "coupon_id", onDelete: "SET NULL" });
+      coupon_collected.belongsTo(models.booking, {
+        foreignKey: "booking_id",
         onDelete: "SET NULL",
       });
-      hotel.hasMany(models.fixed_price, {
-        foreignKey: "destination_id",
-        as: "hotel_destination",
-        onDelete: "SET NULL",
-      });
-
-      hotel.belongsTo(models.car, { foreignKey: "car_id", onDelete: "SET NULL" });
+      coupon_collected.belongsTo(models.user, { foreignKey: "user_id", onDelete: "SET NULL" });
     }
   }
-  hotel.init(
+  coupon_collected.init(
     {
       id: {
         allowNull: false,
@@ -30,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: DataTypes.BIGINT,
       },
-      car_id: {
+      coupon_id: {
         type: DataTypes.BIGINT,
         references: {
           model: "cars",
@@ -39,23 +33,23 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       },
-      title: {
-        allowNull: false,
-        type: DataTypes.STRING,
+      booking_id: {
+        type: DataTypes.BIGINT,
+        references: {
+          model: "orders",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
       },
-      description: {
-        allowNull: false,
-        type: DataTypes.TEXT("long"),
-      },
-      location: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
-      image: {
-        type: DataTypes.STRING,
-      },
-      deletedAt: {
-        type: DataTypes.DATE,
+      user_id: {
+        type: DataTypes.BIGINT,
+        references: {
+          model: "users",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
       },
       createdAt: {
         allowNull: false,
@@ -68,9 +62,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "hotel",
-      paranoid: true,
+      modelName: "coupon_collected",
     }
   );
-  return hotel;
+  return coupon_collected;
 };

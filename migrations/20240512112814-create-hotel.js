@@ -9,6 +9,15 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.BIGINT,
       },
+      car_id: {
+        type: Sequelize.BIGINT,
+        references: {
+          model: "cars",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
+      },
       title: {
         allowNull: false,
         type: Sequelize.STRING,

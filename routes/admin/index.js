@@ -10,6 +10,7 @@ const subCategoryRouter = require("./subCategoryRoutes");
 const userRouter = require("./userRoutes");
 const couponRouter = require("./couponRoutes");
 const reviewRouter = require("./reviewRoutes");
+const airportFairRouter = require("./airportFairRoutes");
 
 router.use("/airports", airportRouter);
 router.use("/hotels", hotelRouter);
@@ -22,5 +23,6 @@ router.use("/sub-categories", subCategoryRouter);
 router.use("/users", userRouter);
 router.use("/coupons", couponRouter);
 router.use("/reviews", reviewRouter);
+router.use("/airport-fairs", airportFairRouter);
 
 module.exports = router;

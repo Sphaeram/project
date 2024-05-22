@@ -8,17 +8,6 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      hotel.hasMany(models.fixed_price, {
-        foreignKey: "source_id",
-        as: "hotel_source",
-        onDelete: "SET NULL",
-      });
-      hotel.hasMany(models.fixed_price, {
-        foreignKey: "destination_id",
-        as: "hotel_destination",
-        onDelete: "SET NULL",
-      });
-
       hotel.belongsTo(models.car, { foreignKey: "car_id", onDelete: "SET NULL" });
     }
   }

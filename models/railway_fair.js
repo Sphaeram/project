@@ -25,10 +25,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.BIGINT,
+        type: DataTypes.BIGINT,
       },
       pickup_point: {
-        type: Sequelize.BIGINT,
+        type: DataTypes.BIGINT,
         references: {
           model: "railway_stations",
           key: "id",
@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
       },
       drop_point: {
-        type: Sequelize.BIGINT,
+        type: DataTypes.BIGINT,
         references: {
           model: "railway_stations",
           key: "id",
@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
       },
       car_id: {
-        type: Sequelize.BIGINT,
+        type: DataTypes.BIGINT,
         references: {
           model: "cars",
           key: "id",
@@ -55,18 +55,18 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
       },
       fair: {
-        type: Sequelize.DOUBLE,
+        type: DataTypes.DOUBLE,
       },
       deletedAt: {
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
       },
     },
     {

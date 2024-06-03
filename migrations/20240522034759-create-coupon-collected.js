@@ -2,45 +2,39 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("railway_fairs", {
+    await queryInterface.createTable("coupon_collecteds", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.BIGINT,
       },
-      pickup_point: {
+      coupon_id: {
         type: Sequelize.BIGINT,
         references: {
-          model: "railway_stations",
+          model: "coupons",
           key: "id",
         },
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       },
-      drop_point: {
+      booking_id: {
         type: Sequelize.BIGINT,
         references: {
-          model: "railway_stations",
+          model: "bookings",
           key: "id",
         },
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       },
-      car_id: {
+      user_id: {
         type: Sequelize.BIGINT,
         references: {
-          model: "cars",
+          model: "users",
           key: "id",
         },
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
-      },
-      fair: {
-        type: Sequelize.DOUBLE,
-      },
-      deletedAt: {
-        type: Sequelize.DATE,
       },
       createdAt: {
         allowNull: false,
@@ -53,6 +47,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("railway_fairs");
+    await queryInterface.dropTable("coupon_collecteds");
   },
 };

@@ -18,7 +18,6 @@ module.exports = {
         },
         onUpdate: "CASCADE",
       },
-
       coupon_id: {
         type: Sequelize.BIGINT,
         references: {
@@ -46,18 +45,28 @@ module.exports = {
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       },
-      pickup_point: {
+      fare_id: {
+        type: Sequelize.BIGINT,
+        references: {
+          model: "fares",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
+      },
+      fare_type: {
         type: Sequelize.STRING,
       },
-      pickup_at: {
-        allowNull: false,
-        type: Sequelize.DATE,
+      pickup_point: {
+        type: Sequelize.STRING,
       },
       destination_point: {
         type: Sequelize.STRING,
       },
-      destination_at: {
-        allowNull: false,
+      pickup_time: {
+        type: Sequelize.TIME,
+      },
+      pickup_date: {
         type: Sequelize.DATE,
       },
       sub_total: {
@@ -75,14 +84,17 @@ module.exports = {
       },
       payment_method: {
         allowNull: false,
+        defaultValue: "Cash",
         type: Sequelize.STRING,
       },
       payment_status: {
         allowNull: false,
+        defaultValue: 0,
         type: Sequelize.TINYINT,
       },
       status: {
         allowNull: false,
+        defaultValue: "pending",
         type: Sequelize.ENUM("pending", "confirmed", "cancelled"),
       },
       deletedAt: {

@@ -2,14 +2,24 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("coupon_collecteds", {
+    await queryInterface.createTable("fares", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.BIGINT,
       },
-      coupon_id: {
+      location_type: {
+        allowNull: false,
+        type: Sequelize.ENUM("airport", "railway", "hotel"),
+      },
+      pickup_point: {
+        type: Sequelize.BIGINT,
+      },
+      drop_point: {
+        type: Sequelize.BIGINT,
+      },
+      car_id: {
         type: Sequelize.BIGINT,
         references: {
           model: "cars",
@@ -18,23 +28,11 @@ module.exports = {
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       },
-      booking_id: {
-        type: Sequelize.BIGINT,
-        references: {
-          model: "bookings",
-          key: "id",
-        },
-        onDelete: "SET NULL",
-        onUpdate: "CASCADE",
+      fare: {
+        type: Sequelize.DOUBLE,
       },
-      user_id: {
-        type: Sequelize.BIGINT,
-        references: {
-          model: "users",
-          key: "id",
-        },
-        onDelete: "SET NULL",
-        onUpdate: "CASCADE",
+      deletedAt: {
+        type: Sequelize.DATE,
       },
       createdAt: {
         allowNull: false,
@@ -47,6 +45,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("coupon_collecteds");
+    await queryInterface.dropTable("fares");
   },
 };

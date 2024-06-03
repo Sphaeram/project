@@ -1,7 +1,7 @@
 const db = require("../models");
 const moment = require("moment-timezone");
 
-const TIME_ZONE = "Europe/London";
+const TIME_ZONE = "Asia/karachi";
 
 const checkCoupon = async (user_id, code) => {
   try {

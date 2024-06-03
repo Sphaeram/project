@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
       coupon_id: {
         type: DataTypes.BIGINT,
         references: {
-          model: "cars",
+          model: "coupons",
           key: "id",
         },
         onDelete: "SET NULL",
@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
       booking_id: {
         type: DataTypes.BIGINT,
         references: {
-          model: "orders",
+          model: "bookings",
           key: "id",
         },
         onDelete: "SET NULL",

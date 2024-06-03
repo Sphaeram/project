@@ -69,19 +69,29 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       },
+      fare_id: {
+        type: DataTypes.BIGINT,
+        references: {
+          model: "fares",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
+      },
+      fare_type: {
+        type: DataTypes.STRING,
+      },
       pickup_point: {
         type: DataTypes.STRING,
       },
-      pickup_at: {
-        allowNull: false,
+      pickup_time: {
+        type: DataTypes.TIME,
+      },
+      pickup_date: {
         type: DataTypes.DATE,
       },
       destination_point: {
         type: DataTypes.STRING,
-      },
-      destination_at: {
-        allowNull: false,
-        type: DataTypes.DATE,
       },
       sub_total: {
         allowNull: false,
@@ -98,14 +108,17 @@ module.exports = (sequelize, DataTypes) => {
       },
       payment_method: {
         allowNull: false,
+        defaultValue: "Cash",
         type: DataTypes.STRING,
       },
       payment_status: {
         allowNull: false,
+        defaultValue: 0,
         type: DataTypes.TINYINT,
       },
       status: {
         allowNull: false,
+        defaultValue: "pending",
         type: DataTypes.ENUM("pending", "confirmed", "cancelled"),
       },
       deletedAt: {

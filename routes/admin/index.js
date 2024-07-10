@@ -11,6 +11,7 @@ const userRouter = require("./userRoutes");
 const couponRouter = require("./couponRoutes");
 const reviewRouter = require("./reviewRoutes");
 const fareRouter = require("./fareRoutes");
+const bookingRouter = require("./bookingRoutes");
 
 router.use("/airports", airportRouter);
 router.use("/hotels", hotelRouter);
@@ -24,5 +25,6 @@ router.use("/users", userRouter);
 router.use("/coupons", couponRouter);
 router.use("/reviews", reviewRouter);
 router.use("/fares", fareRouter);
+router.use("/bookings", bookingRouter);
 
 module.exports = router;

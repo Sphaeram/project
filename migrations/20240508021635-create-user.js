@@ -37,6 +37,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
+      phone_no: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
       email_verified: {
         allowNull: false,
         defaultValue: 0,

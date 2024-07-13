@@ -63,6 +63,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
+      phone_no: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
       email_verified: {
         allowNull: false,
         defaultValue: 0,

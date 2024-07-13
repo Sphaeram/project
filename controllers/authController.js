@@ -5,10 +5,15 @@ const { sanitizeFields } = require("../utils/otherUtils");
 
 module.exports = {
   signUp: async (req, res, next) => {
-    const sanitizedFields = sanitizeFields(["email", "username", "password"], req.body);
+    const sanitizedFields = sanitizeFields(["email", "username", "password", "phone_no"], req.body);
     sanitizedFields.is_email_verified = 1;
 
-    if (!sanitizedFields.email || !sanitizedFields.username || !sanitizedFields.password)
+    if (
+      !sanitizedFields.email ||
+      !sanitizedFields.username ||
+      !sanitizedFields.password ||
+      !sanitizedFields.phone_no
+    )
       return res.status(400).json({ data: "Bad Request!" });
 
     try {

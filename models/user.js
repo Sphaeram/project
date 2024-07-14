@@ -69,7 +69,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       email_verified: {
         allowNull: false,
-        defaultValue: 0,
+        defaultValue: 1,
         type: DataTypes.TINYINT,
       },
       last_login_at: {

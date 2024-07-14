@@ -24,6 +24,6 @@ router.use("/sub-categories", subCategoryRouter);
 router.use("/users", userRouter);
 router.use("/reviews", reviewRouter);
 router.use("/fares", fareRouter);
-router.use("/", (req, res) => res.status(200).send("<center><h1>Welcome!</h1></center>"));
+router.get("/", (req, res) => res.status(200).send("<center><h1>Welcome!</h1></center>"));
 
 module.exports = router;

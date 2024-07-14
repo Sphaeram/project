@@ -31,6 +31,9 @@ module.exports = {
 
       if (user) return res.status(409).json({ data: "Email Already Registered!" });
 
+      const salt = bcrypt.genSaltSync(10);
+      sanitizedFields.password = bcrypt.hashSync(sanitizedFields.password, salt);
+
       const createdUser = await db.user.create(sanitizedFields);
 
       return res.status(200).json({ data: createdUser });

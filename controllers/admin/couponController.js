@@ -1,12 +1,14 @@
 const db = require("../../models");
 const { sanitizeFields } = require("../../utils/otherUtils");
 
-const allowedFields = ["title", "code", "valid_from", "valid_to", "discount"];
+const allowedFields = ["code", "discount", "status"];
 
 module.exports = {
   createCoupon: async (req, res, next) => {
+    if (Object.keys(req.body).length === 0) return res.status(400).json({ data: "Bad Request!" });
+    const sanitizedFields = sanitizeFields(allowedFields, req.body);
+
     try {
-      const sanitizedFields = sanitizeFields(allowedFields, req.body);
       const coupon = await db.coupon.create(sanitizedFields);
       return res.status(200).json({ data: coupon });
     } catch (error) {

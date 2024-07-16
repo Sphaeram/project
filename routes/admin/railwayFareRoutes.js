@@ -1,4 +1,10 @@
-const railwayStationController = require("../../controllers/admin/railwayStationController");
+const {
+  createRailwayFare,
+  updateRailwayFare,
+  getAllRailwayFares,
+  getRailwayFareById,
+  deleteRailwayFare,
+} = require("../../controllers/admin/railwayFareController");
 const { upload, handlingMulterError } = require("../../utils/multerUtil");
 
 const router = require("express").Router();
@@ -11,7 +17,7 @@ router.post(
   },
   upload,
   handlingMulterError,
-  railwayStationController.createRailwayStation
+  createRailwayFare
 );
 
 router.put(
@@ -22,13 +28,11 @@ router.put(
   },
   upload,
   handlingMulterError,
-  railwayStationController.updateRailwayStationById
+  updateRailwayFare
 );
 
-router
-  .get("/", railwayStationController.getAllRailwayStations)
-  .get("/railway-station", railwayStationController.getRailwayStationById);
+router.get("/", getAllRailwayFares).get("/railway-fare", getRailwayFareById);
 
-router.delete("/delete", railwayStationController.deleteRailwayStationById);
+router.delete("/delete", deleteRailwayFare);
 
 module.exports = router;

@@ -1,6 +1,6 @@
 const router = require("express").Router();
-const airportRouter = require("./airportRoutes");
-const railwayStationRouter = require("./railwayStationRoutes");
+const airportFareRouter = require("./airportFareRoutes");
+const railwayFareRouter = require("./railwayFareRoutes");
 const packageRouter = require("./packageRoutes");
 const carRouter = require("./carRoutes");
 const carPackageRouter = require("./carPackageRoutes");
@@ -9,12 +9,11 @@ const subCategoryRouter = require("./subCategoryRoutes");
 const userRouter = require("./userRoutes");
 const couponRouter = require("./couponRoutes");
 const reviewRouter = require("./reviewRoutes");
-const fareRouter = require("./fareRoutes");
 const bookingRouter = require("./bookingRoutes");
 const reportRouter = require("./reportRoutes");
 
-router.use("/airports", airportRouter);
-router.use("/railway-stations", railwayStationRouter);
+router.use("/airport-fares", airportFareRouter);
+router.use("/railway-fares", railwayFareRouter);
 router.use("/packages", packageRouter);
 router.use("/cars", carRouter);
 router.use("/car-packages", carPackageRouter);
@@ -23,7 +22,6 @@ router.use("/sub-categories", subCategoryRouter);
 router.use("/users", userRouter);
 router.use("/coupons", couponRouter);
 router.use("/reviews", reviewRouter);
-router.use("/fares", fareRouter);
 router.use("/bookings", bookingRouter);
 router.use("/reports", reportRouter);
 

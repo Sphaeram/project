@@ -20,43 +20,18 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: DataTypes.BIGINT,
       },
-      title: {
-        allowNull: false,
-        defaultValue: "",
-        type: DataTypes.STRING,
-      },
       code: {
         allowNull: false,
         type: DataTypes.STRING,
-      },
-      valid_from: {
-        allowNull: false,
-        type: DataTypes.DATE,
-        validate: {
-          isDate: {
-            args: true,
-            msg: "Enter a valid Date format (MM-DD-YYYY OR MM/DD/YYYY OR YYYY-MM-DD)",
-          },
-        },
-      },
-      valid_to: {
-        allowNull: false,
-        type: DataTypes.DATE,
-        validate: {
-          isDate: {
-            args: true,
-            msg: "Enter a valid Date format (MM-DD-YYYY OR MM/DD/YYYY OR YYYY-MM-DD)",
-          },
-        },
       },
       discount: {
         allowNull: false,
         type: DataTypes.DOUBLE,
       },
-      uses_per_user: {
+      status: {
         allowNull: false,
-        defaultValue: 1,
-        type: DataTypes.INTEGER,
+        defaultValue: "active",
+        type: DataTypes.ENUM("active", "inactive"),
       },
       createdAt: {
         allowNull: false,

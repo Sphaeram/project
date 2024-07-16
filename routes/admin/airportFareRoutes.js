@@ -1,9 +1,9 @@
 const {
-  createAirport,
-  getAllAirports,
-  getAirportById,
-  deleteAirport,
-  updateAirport,
+  createAirportFare,
+  updateAirportFare,
+  deleteAirportFare,
+  getAirportFareById,
+  getAllAirportFares,
 } = require("../../controllers/admin/airportController");
 const { upload, handlingMulterError } = require("../../utils/multerUtil");
 
@@ -17,7 +17,7 @@ router.post(
   },
   upload,
   handlingMulterError,
-  createAirport
+  createAirportFare
 );
 
 router.put(
@@ -28,11 +28,11 @@ router.put(
   },
   upload,
   handlingMulterError,
-  updateAirport
+  updateAirportFare
 );
 
-router.get("/", getAllAirports).get("/airport", getAirportById);
+router.get("/", getAllAirportFares).get("/airport-fare", getAirportFareById);
 
-router.delete("/delete", deleteAirport);
+router.delete("/delete", deleteAirportFare);
 
 module.exports = router;

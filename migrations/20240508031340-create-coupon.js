@@ -9,30 +9,18 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.BIGINT,
       },
-      title: {
-        allowNull: false,
-        defaultValue: "",
-        type: Sequelize.STRING,
-      },
       code: {
         allowNull: false,
         type: Sequelize.STRING,
-      },
-      valid_from: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
-      valid_to: {
-        allowNull: false,
-        type: Sequelize.DATE,
       },
       discount: {
         allowNull: false,
         type: Sequelize.DOUBLE,
       },
-      uses_per_user: {
+      status: {
         allowNull: false,
-        type: Sequelize.INTEGER,
+        defaultValue: "inactive",
+        type: Sequelize.ENUM("active", "inactive"),
       },
       createdAt: {
         allowNull: false,

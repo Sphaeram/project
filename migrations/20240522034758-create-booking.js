@@ -45,15 +45,6 @@ module.exports = {
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       },
-      fare_id: {
-        type: Sequelize.BIGINT,
-        references: {
-          model: "fares",
-          key: "id",
-        },
-        onDelete: "SET NULL",
-        onUpdate: "CASCADE",
-      },
       fare_type: {
         type: Sequelize.STRING,
       },

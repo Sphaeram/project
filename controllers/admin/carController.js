@@ -1,13 +1,14 @@
 const db = require("../../models");
-const { sanitizeFields, deleteLocalFile } = require("../../utils/otherUtils");
+const { sanitizeFields, deleteLocalFile, deleteFile } = require("../../utils/otherUtils");
 const path = require("path");
 
 const allowedFields = [
-  "name",
+  "type",
+  "driver_name",
+  "model",
   "number_plate",
-  "description",
   "seating_capacity",
-  "luggage_number",
+  "luggage_capacity",
   "image",
 ];
 
@@ -20,11 +21,22 @@ module.exports = {
       }`;
 
     try {
-      const car = await db.car.create(sanitizedFields);
-      return res.status(200).json({ data: car });
+      const foundCar = await db.car.findOne({
+        where: { type: sanitizedFields.type, model: sanitizedFields.model },
+        raw: true,
+      });
+      if (foundCar) {
+        if (req.files && req.files["car_image"] && req.files["car_image"].length > 0)
+          deleteFile(sanitizedFields.image);
+
+        return res.status(409).json({ data: "Car already exists!" });
+      } else {
+        const car = await db.car.create(sanitizedFields);
+        return res.status(200).json({ data: car });
+      }
     } catch (error) {
       if (req.files && req.files["car_image"] && req.files["car_image"].length > 0)
-        deleteLocalFile(path.join(__dirname, `../../public/${sanitizedFields.image}`));
+        deleteFile(sanitizedFields.image);
 
       return res.status(500).json({ data: error.message });
     }
@@ -52,12 +64,12 @@ module.exports = {
       const [rowsAffected] = await db.car.update(sanitizedFields, { where: { id: car.id } });
       if (rowsAffected === 0) return res.status(404).json({ data: "Car Not Updated!" });
 
-      if (image) deleteLocalFile(path.join(__dirname, `../../public/${car.image}`));
+      if (image) deleteFile(car.image);
 
       return res.status(200).json({ data: "Car Updated!" });
     } catch (error) {
       if (req.files && req.files["car_image"] && req.files["car_image"].length > 0)
-        deleteLocalFile(path.join(__dirname, `../../public/${sanitizedFields.image}`));
+        deleteFile(sanitizedFields.image);
       return res.status(500).json({ data: error.message });
     }
   },

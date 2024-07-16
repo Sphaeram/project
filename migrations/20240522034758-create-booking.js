@@ -45,15 +45,6 @@ module.exports = {
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       },
-      fare_id: {
-        type: Sequelize.BIGINT,
-        references: {
-          model: "fares",
-          key: "id",
-        },
-        onDelete: "SET NULL",
-        onUpdate: "CASCADE",
-      },
       fare_type: {
         type: Sequelize.STRING,
       },
@@ -96,6 +87,10 @@ module.exports = {
         allowNull: false,
         defaultValue: "pending",
         type: Sequelize.ENUM("pending", "confirmed", "cancelled"),
+      },
+      booking_date: {
+        allowNull: false,
+        type: Sequelize.DATE,
       },
       deletedAt: {
         type: Sequelize.DATE,

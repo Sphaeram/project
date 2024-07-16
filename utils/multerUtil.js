@@ -6,9 +6,9 @@ const storage = multer.diskStorage({
     let folder = "public/images";
 
     if (req.destination === "airport") folder = "public/images/airport";
-    if (req.destination === "hotel") folder = "public/images/hotel";
     if (req.destination === "railway_station") folder = "public/images/railway_station";
     if (req.destination === "car") folder = "public/images/car";
+    if (req.destination === "package") folder = "public/images/package";
     if (req.destination === "category") folder = "public/images/category";
     if (req.destination === "sub_category") folder = "public/images/sub_category";
 
@@ -22,7 +22,7 @@ const storage = multer.diskStorage({
 
 const fields = [
   { name: "airport_image", maxCount: 1 },
-  { name: "hotel_image", maxCount: 1 },
+  { name: "package_image", maxCount: 1 },
   { name: "railway_station_image", maxCount: 1 },
   { name: "car_image", maxCount: 1 },
   { name: "category_image", maxCount: 1 },

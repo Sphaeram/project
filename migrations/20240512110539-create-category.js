@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("hotels", {
+    await queryInterface.createTable("categories", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -18,17 +18,13 @@ module.exports = {
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       },
-      title: {
+      ziyarat_name: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      description: {
+      price: {
         allowNull: false,
-        type: Sequelize.TEXT("long"),
-      },
-      location: {
-        allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.DOUBLE,
       },
       image: {
         type: Sequelize.STRING,
@@ -47,6 +43,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("hotels");
+    await queryInterface.dropTable("categories");
   },
 };

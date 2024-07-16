@@ -11,17 +11,15 @@ module.exports = {
       },
       category_id: {
         type: Sequelize.BIGINT,
+        references: {
+          model: "categories",
+          key: "id",
+        },
+        onDelete: "SET NULL",
       },
-      title: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
-      description: {
+      ziyarat_points: {
         allowNull: false,
         type: Sequelize.TEXT("long"),
-      },
-      image: {
-        type: Sequelize.STRING,
       },
       deletedAt: {
         type: Sequelize.DATE,

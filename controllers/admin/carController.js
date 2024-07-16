@@ -21,19 +21,8 @@ module.exports = {
       }`;
 
     try {
-      const foundCar = await db.car.findOne({
-        where: { type: sanitizedFields.type, model: sanitizedFields.model },
-        raw: true,
-      });
-      if (foundCar) {
-        if (req.files && req.files["car_image"] && req.files["car_image"].length > 0)
-          deleteFile(sanitizedFields.image);
-
-        return res.status(409).json({ data: "Car already exists!" });
-      } else {
-        const car = await db.car.create(sanitizedFields);
-        return res.status(200).json({ data: car });
-      }
+      const car = await db.car.create(sanitizedFields);
+      return res.status(200).json({ data: car });
     } catch (error) {
       if (req.files && req.files["car_image"] && req.files["car_image"].length > 0)
         deleteFile(sanitizedFields.image);

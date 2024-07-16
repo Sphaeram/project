@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("airports", {
+    await queryInterface.createTable("airport_fares", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -18,26 +18,26 @@ module.exports = {
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       },
-      title: {
+      pickup_location: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      description: {
-        allowNull: false,
-        type: Sequelize.TEXT("long"),
-      },
-      location: {
+      drop_location: {
         allowNull: false,
         type: Sequelize.STRING,
       },
       image: {
         type: Sequelize.STRING,
       },
-      createdAt: {
+      fare: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.DOUBLE,
       },
       deletedAt: {
+        type: Sequelize.DATE,
+      },
+      createdAt: {
+        allowNull: false,
         type: Sequelize.DATE,
       },
       updatedAt: {
@@ -47,6 +47,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("airports");
+    await queryInterface.dropTable("airport_fares");
   },
 };

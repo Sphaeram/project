@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       category.hasMany(models.sub_category, { foreignKey: "category_id", onDelete: "SET NULL" });
+      category.belongsTo(models.car, { foreignKey: "car_id", onDelete: "SET NULL" });
     }
   }
   category.init(
@@ -19,13 +20,22 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: DataTypes.BIGINT,
       },
-      title: {
+      car_id: {
+        type: DataTypes.BIGINT,
+        references: {
+          model: "cars",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
+      },
+      ziyarat_name: {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      description: {
+      price: {
         allowNull: false,
-        type: DataTypes.TEXT("long"),
+        type: DataTypes.DOUBLE,
       },
       image: {
         type: DataTypes.STRING,

@@ -9,13 +9,22 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.BIGINT,
       },
-      title: {
+      car_id: {
+        type: Sequelize.BIGINT,
+        references: {
+          model: "cars",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
+      },
+      ziyarat_name: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      description: {
+      price: {
         allowNull: false,
-        type: Sequelize.TEXT("long"),
+        type: Sequelize.DOUBLE,
       },
       image: {
         type: Sequelize.STRING,

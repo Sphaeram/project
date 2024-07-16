@@ -11,11 +11,6 @@ const FARE_DROP_POINT_INCLUDE_QUERIES = [
     as: "railway_drop",
     attributes: { exclude: ["deletedAt", "createdAt", "updatedAt"] },
   },
-  {
-    model: db.hotel,
-    as: "hotel_drop",
-    attributes: { exclude: ["deletedAt", "createdAt", "updatedAt"] },
-  },
 ];
 
 module.exports = {

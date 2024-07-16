@@ -1,28 +1,17 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class hotel extends Model {
+  class airport_fare extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      hotel.hasMany(models.fare, {
-        as: "hotel_pickup",
-        foreignKey: "pickup_point",
-        onDelete: "SET NULL",
-      });
-      hotel.hasMany(models.fare, {
-        as: "hotel_drop",
-        foreignKey: "drop_point",
-        onDelete: "SET NULL",
-      });
-
-      hotel.belongsTo(models.car, { foreignKey: "car_id", onDelete: "SET NULL" });
+      airport_fare.belongsTo(models.car, { foreignKey: "car_id", onDelete: "SET NULL" });
     }
   }
-  hotel.init(
+  airport_fare.init(
     {
       id: {
         allowNull: false,
@@ -39,20 +28,20 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       },
-      title: {
+      pickup_location: {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      description: {
-        allowNull: false,
-        type: DataTypes.TEXT("long"),
-      },
-      location: {
+      drop_location: {
         allowNull: false,
         type: DataTypes.STRING,
       },
       image: {
         type: DataTypes.STRING,
+      },
+      fare: {
+        allowNull: false,
+        type: DataTypes.DOUBLE,
       },
       deletedAt: {
         type: DataTypes.DATE,
@@ -68,9 +57,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "hotel",
+      modelName: "airport_fare",
       paranoid: true,
     }
   );
-  return hotel;
+  return airport_fare;
 };

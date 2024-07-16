@@ -5,7 +5,8 @@ const adminRouter = require("./admin/index");
 const { verifyAdmin } = require("../middlewares/verify");
 
 router.use("/auth", authRouter);
-router.use("/admin", verifyAdmin, adminRouter);
+// verifyAdmin
+router.use("/admin", adminRouter);
 router.use("/", websiteRouter);
 
 module.exports = router;

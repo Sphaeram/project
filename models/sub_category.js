@@ -21,17 +21,15 @@ module.exports = (sequelize, DataTypes) => {
       },
       category_id: {
         type: DataTypes.BIGINT,
+        references: {
+          model: "categories",
+          key: "id",
+        },
+        onDelete: "SET NULL",
       },
-      title: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
-      description: {
+      ziyarat_points: {
         allowNull: false,
         type: DataTypes.TEXT("long"),
-      },
-      image: {
-        type: DataTypes.STRING,
       },
       deletedAt: {
         type: DataTypes.DATE,

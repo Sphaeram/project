@@ -9,12 +9,16 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.BIGINT,
       },
-      name: {
+      type: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      description: {
-        defaultValue: "",
+      driver_name: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
+      model: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
       number_plate: {
@@ -25,7 +29,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER,
       },
-      luggage_number: {
+      luggage_capacity: {
         allowNull: false,
         type: Sequelize.INTEGER,
       },

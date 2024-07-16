@@ -1,6 +1,5 @@
 const router = require("express").Router();
 const airportRouter = require("./airportRoutes");
-const hotelRouter = require("./hotelRoutes");
 const railwayStationRouter = require("./railwayStationRoutes");
 const packageRouter = require("./packageRoutes");
 const carRouter = require("./carRoutes");
@@ -15,7 +14,6 @@ const bookingRouter = require("./bookingRoutes");
 router.use("/coupons", couponRouter);
 router.use("/bookings", bookingRouter);
 router.use("/airports", airportRouter);
-router.use("/hotels", hotelRouter);
 router.use("/railway-stations", railwayStationRouter);
 router.use("/packages", packageRouter);
 router.use("/cars", carRouter);

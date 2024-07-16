@@ -74,7 +74,6 @@ module.exports = {
       fares.forEach((element) => {
         if (!element.airport_drop) delete element.airport_drop;
         if (!element.railway_drop) delete element.railway_drop;
-        if (!element.hotel_drop) delete element.hotel_drop;
       });
 
       return res.status(200).json({ data: fares });
@@ -97,7 +96,6 @@ module.exports = {
       fares.forEach((element) => {
         if (!element.airport_drop) delete element.airport_drop;
         if (!element.railway_drop) delete element.railway_drop;
-        if (!element.hotel_drop) delete element.hotel_drop;
       });
 
       return res.status(200).json({ data: fares });
@@ -123,12 +121,10 @@ module.exports = {
     if (!car_id) return res.status(400).json({ data: "Bad Request!" });
     try {
       const airports = await db.airport.findAll({ where: { car_id: car_id } });
-      const hotels = await db.hotel.findAll({ where: { car_id: car_id } });
       const railways = await db.railway_station.findAll({ where: { car_id: car_id } });
 
       const data = {
         airports: [...airports],
-        hotels: [...hotels],
         railways: [...railways],
       };
 

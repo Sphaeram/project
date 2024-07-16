@@ -55,6 +55,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       uses_per_user: {
         allowNull: false,
+        defaultValue: 1,
         type: DataTypes.INTEGER,
       },
       createdAt: {

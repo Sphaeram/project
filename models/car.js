@@ -9,10 +9,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       car.hasMany(models.booking, { foreignKey: "car_id", onDelete: "SET NULL" });
-      car.hasMany(models.airport, { foreignKey: "car_id", onDelete: "SET NULL" });
-      car.hasMany(models.hotel, { foreignKey: "car_id", onDelete: "SET NULL" });
-      car.hasMany(models.railway_station, { foreignKey: "car_id", onDelete: "SET NULL" });
-      car.hasMany(models.fare, { foreignKey: "car_id", onDelete: "SET NULL" });
+      car.hasMany(models.airport_fare, { foreignKey: "car_id", onDelete: "SET NULL" });
+      car.hasMany(models.railway_fare, { foreignKey: "car_id", onDelete: "SET NULL" });
+      car.hasMany(models.category, { foreignKey: "car_id", onDelete: "SET NULL" });
 
       car.belongsToMany(models.package, {
         through: models.car_package,
@@ -29,12 +28,16 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: DataTypes.BIGINT,
       },
-      name: {
+      type: {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      description: {
-        defaultValue: "",
+      driver_name: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
+      model: {
+        allowNull: false,
         type: DataTypes.STRING,
       },
       number_plate: {
@@ -45,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.INTEGER,
       },
-      luggage_number: {
+      luggage_capacity: {
         allowNull: false,
         type: DataTypes.INTEGER,
       },

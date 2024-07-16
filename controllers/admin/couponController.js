@@ -1,7 +1,7 @@
 const db = require("../../models");
 const { sanitizeFields } = require("../../utils/otherUtils");
 
-const allowedFields = ["title", "code", "valid_from", "valid_to", "discount", "uses_per_user"];
+const allowedFields = ["title", "code", "valid_from", "valid_to", "discount"];
 
 module.exports = {
   createCoupon: async (req, res, next) => {

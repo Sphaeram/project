@@ -33,9 +33,8 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.TEXT("long"),
       },
-      price: {
-        allowNull: false,
-        type: DataTypes.DOUBLE,
+      image: {
+        type: DataTypes.STRING,
       },
       deletedAt: {
         type: DataTypes.DATE,

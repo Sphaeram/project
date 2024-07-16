@@ -97,6 +97,10 @@ module.exports = {
         defaultValue: "pending",
         type: Sequelize.ENUM("pending", "confirmed", "cancelled"),
       },
+      booking_date: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
       deletedAt: {
         type: Sequelize.DATE,
       },

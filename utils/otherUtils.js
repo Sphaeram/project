@@ -1,4 +1,5 @@
 const fs = require("fs");
+const path = require("path");
 
 const sanitizeFields = (allowedFields, requestBody) => {
   const sanitizedFields = {};
@@ -30,4 +31,21 @@ const deleteLocalFile = (imagePath) => {
   });
 };
 
-module.exports = { sanitizeFields, generateOTP, deleteLocalFile };
+const deleteFile = (imagePath) => {
+  const filePath = path.join(__dirname, `../public/${imagePath}`);
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    // /Does file exists?
+    if (err) return;
+
+    // Delete the file
+    fs.unlink(filePath, (err) => {
+      // Error in deleting the file
+      if (err) return;
+
+      // File deleted successfully!
+      return;
+    });
+  });
+};
+
+module.exports = { sanitizeFields, generateOTP, deleteLocalFile, deleteFile };

@@ -9,8 +9,7 @@ const storage = multer.diskStorage({
     if (req.destination === "railway_station") folder = "public/images/railway_station";
     if (req.destination === "car") folder = "public/images/car";
     if (req.destination === "package") folder = "public/images/package";
-    if (req.destination === "category") folder = "public/images/category";
-    if (req.destination === "sub_category") folder = "public/images/sub_category";
+    if (req.destination === "ziyarat") folder = "public/images/ziyarat";
 
     cb(null, folder);
   },
@@ -25,8 +24,7 @@ const fields = [
   { name: "package_image", maxCount: 1 },
   { name: "railway_station_image", maxCount: 1 },
   { name: "car_image", maxCount: 1 },
-  { name: "category_image", maxCount: 1 },
-  { name: "sub_category_image", maxCount: 1 },
+  { name: "ziyarat_image", maxCount: 1 },
 ];
 
 const upload = multer({

@@ -42,6 +42,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       number_plate: {
         allowNull: false,
+        unique: true,
         type: DataTypes.STRING,
       },
       seating_capacity: {

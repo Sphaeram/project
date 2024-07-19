@@ -1,24 +1,33 @@
 const db = require("../../models");
-const { sanitizeFields, deleteFile } = require("../../utils/otherUtils");
+const { sanitizeFields, deleteFile, convertToJpeg } = require("../../utils/otherUtils");
 
 const allowedFields = ["number_plate", "name", "details", "price"];
 
 module.exports = {
   createPackage: async (req, res, next) => {
     const sanitizedFields = sanitizeFields(allowedFields, req.body);
-    if (req.files["package_image"] && req.files["package_image"].length > 0)
-      sanitizedFields.image = `${req.files["package_image"][0].destination.substring(7)}/${
-        req.files["package_image"][0].filename
-      }`;
-
-    if (Object.keys(req.body).length === 0) {
-      deleteFile(sanitizedFields.image);
-      return res.status(400).json({ data: "Bad Request!" });
-    }
-
     const t = await db.sequelize.transaction();
 
     try {
+      if (req.files["package_image"] && req.files["package_image"].length > 0) {
+        sanitizedFields.image = `${req.files["package_image"][0].destination.substring(7)}/${
+          req.files["package_image"][0].filename
+        }`;
+        // If the file is in binary (sent from a flutter web application)
+        if (!sanitizedFields.image?.split(".")[1]) {
+          const format = await convertToJpeg(
+            `${sanitizedFields.image}`,
+            `${sanitizedFields.image}.jpeg`
+          );
+          sanitizedFields.image = sanitizedFields.image?.concat(".", format);
+        }
+      }
+
+      if (Object.keys(req.body).length === 0) {
+        deleteFile(sanitizedFields.image);
+        return res.status(400).json({ data: "Bad Request!" });
+      }
+
       const sanitizedDetails = JSON.parse(sanitizedFields.details);
       const car = await db.car.findOne({ where: { number_plate: sanitizedFields.number_plate } });
       if (!car) {
@@ -63,22 +72,28 @@ module.exports = {
     let image = false;
     const { packageId, carId } = req.query;
     const sanitizedFields = sanitizeFields(allowedFields, req.body);
-
-    if (req.files["package_image"] && req.files["package_image"].length > 0) {
-      image = true;
-      sanitizedFields.image = `${req.files["package_image"][0].destination.substring(7)}/${
-        req.files["package_image"][0].filename
-      }`;
-    }
-
-    if (!packageId || !carId || Object.keys(req.body).length === 0) {
-      deleteFile(sanitizedFields.image);
-      return res.status(400).json({ data: "Bad Request!" });
-    }
-
     const t = await db.sequelize.transaction();
 
     try {
+      if (req.files["package_image"] && req.files["package_image"].length > 0) {
+        image = true;
+        sanitizedFields.image = `${req.files["package_image"][0].destination.substring(7)}/${
+          req.files["package_image"][0].filename
+        }`;
+        // If the file is in binary (sent from a flutter web application)
+        if (!sanitizedFields.image?.split(".")[1]) {
+          const format = await convertToJpeg(
+            `${sanitizedFields.image}`,
+            `${sanitizedFields.image}.jpeg`
+          );
+          sanitizedFields.image = sanitizedFields.image?.concat(".", format);
+        }
+      }
+
+      if (!packageId || !carId || Object.keys(req.body).length === 0) {
+        deleteFile(sanitizedFields.image);
+        return res.status(400).json({ data: "Bad Request!" });
+      }
       const sanitizedDetails = JSON.parse(sanitizedFields.details);
       const existingCar = await db.car.findOne({ where: { id: carId } });
       if (!existingCar) {

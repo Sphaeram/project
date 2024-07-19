@@ -1,31 +1,40 @@
 const db = require("../../models/index");
-const { sanitizeFields, deleteFile } = require("../../utils/otherUtils");
+const { sanitizeFields, deleteFile, convertToJpeg } = require("../../utils/otherUtils");
 
 const allowedFields = ["car_id", "pickup_location", "drop_location", "fare"];
 
 const createRailwayFare = async (req, res, next) => {
   const sanitizedFields = sanitizeFields(allowedFields, req.body);
 
-  if (
-    req.files &&
-    req.files["railway_station_image"] &&
-    req.files["railway_station_image"].length > 0
-  ) {
-    sanitizedFields.image = `${req.files["railway_station_image"][0].destination.substring(7)}/${
-      req.files["railway_station_image"][0].filename
-    }`;
-  }
   try {
+    if (req.files["railway_station_image"] && req.files["railway_station_image"].length > 0) {
+      sanitizedFields.image = `${req.files["railway_station_image"][0].destination.substring(7)}/${
+        req.files["railway_station_image"][0].filename
+      }`;
+      // If the file is in binary (sent from a flutter web application)
+      if (!sanitizedFields.image?.split(".")[1]) {
+        const format = await convertToJpeg(
+          `${sanitizedFields.image}`,
+          `${sanitizedFields.image}.jpeg`
+        );
+        sanitizedFields.image = sanitizedFields.image?.concat(".", format);
+      }
+    }
+    if (Object.keys(req.body).length === 0) {
+      deleteFile(sanitizedFields.image);
+      return res.status(400).json({ data: "Bad Request!" });
+    }
+
     const car = await db.car.findByPk(sanitizedFields.car_id);
-    if (!car) return res.status(404).json({ data: "Car Not Found!" });
+    if (!car) {
+      deleteFile(sanitizedFields.image);
+      return res.status(404).json({ data: "Car Not Found!" });
+    }
+
     const railway = await db.railway_fare.create(sanitizedFields);
     return res.status(200).json({ data: railway });
   } catch (error) {
-    if (
-      req.files &&
-      req.files["railway_station_image"] &&
-      req.files["railway_station_image"]?.length !== 0
-    )
+    if (req.files["railway_station_image"] && req.files["railway_station_image"]?.length !== 0)
       deleteFile(sanitizedFields.image);
 
     return res.status(500).json({ data: error.message });
@@ -35,35 +44,44 @@ const createRailwayFare = async (req, res, next) => {
 const updateRailwayFare = async (req, res, next) => {
   let image = false;
   const { railwayFareId } = req.query;
-  if (!railwayFareId || isNaN(railwayFareId)) return res.status(400).json({ data: "Bad Request!" });
-
   const sanitizedFields = sanitizeFields(allowedFields, req.body);
 
-  if (req.files["railway_station_image"] && req.files["railway_station_image"].length > 0) {
-    image = true;
-    sanitizedFields.image = `${req.files["railway_station_image"][0].destination.substring(7)}/${
-      req.files["railway_station_image"][0].filename
-    }`;
-  }
-
   try {
-    const railway = await db.railway_fare.findByPk(railwayFareId);
-    if (!railway) return res.status(404).json({ data: "No such Railway Station found!" });
+    if (req.files["railway_station_image"] && req.files["railway_station_image"].length > 0) {
+      image = true;
+      sanitizedFields.image = `${req.files["railway_station_image"][0].destination.substring(7)}/${
+        req.files["railway_station_image"][0].filename
+      }`;
+      // If the file is in binary (sent from a flutter web application)
+      if (!sanitizedFields.image?.split(".")[1]) {
+        const format = await convertToJpeg(
+          `${sanitizedFields.image}`,
+          `${sanitizedFields.image}.jpeg`
+        );
+        sanitizedFields.image = sanitizedFields.image?.concat(".", format);
+      }
+    }
 
-    const [rowsAffected] = await db.railway_fare.update(sanitizedFields, {
+    if (!railwayFareId || isNaN(railwayFareId) || Object.keys(req.body).length === 0) {
+      deleteFile(sanitizedFields.image);
+      return res.status(400).json({ data: "Bad Request!" });
+    }
+
+    const railway = await db.railway_fare.findByPk(railwayFareId);
+    if (!railway) {
+      deleteFile(sanitizedFields.image);
+      return res.status(404).json({ data: "No such Railway Station found!" });
+    }
+
+    await db.railway_fare.update(sanitizedFields, {
       where: { id: railwayFareId },
     });
-    if (rowsAffected === 0) return res.status(500).json({ data: "Railway Station Not Updated!" });
 
     if (image) deleteFile(railway.image);
 
     return res.status(200).json({ data: "Railway Station Updated!" });
   } catch (error) {
-    if (
-      req.files &&
-      req.files["railway_station_image"] &&
-      req.files["railway_station_image"]?.length !== 0
-    )
+    if (req.files["railway_station_image"] && req.files["railway_station_image"]?.length !== 0)
       deleteFile(sanitizedFields.image);
 
     return res.status(500).json({ data: error.message });

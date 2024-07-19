@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const sharp = require("sharp");
 
 const sanitizeFields = (allowedFields, requestBody) => {
   const sanitizedFields = {};
@@ -48,4 +49,29 @@ const deleteFile = (imagePath) => {
   });
 };
 
-module.exports = { sanitizeFields, generateOTP, deleteLocalFile, deleteFile };
+const convertToJpeg = (inputFilePath, outputFilePath) => {
+  inputFilePath = path.join(__dirname, `../public/${inputFilePath}`);
+  outputFilePath = path.join(__dirname, `../public/${outputFilePath}`);
+
+  return new Promise((resolve, reject) => {
+    fs.readFile(inputFilePath, (err, data) => {
+      if (err) {
+        reject("Error reading file:", err);
+        return;
+      }
+
+      sharp(data)
+        .toFormat("jpeg")
+        .toFile(outputFilePath, (err, info) => {
+          if (err) {
+            reject("Error converting file to JPEG:", err);
+          } else {
+            deleteFile(inputFilePath);
+            resolve(info.format);
+          }
+        });
+    });
+  });
+};
+
+module.exports = { sanitizeFields, generateOTP, deleteLocalFile, deleteFile, convertToJpeg };

@@ -1,23 +1,33 @@
 const db = require("../../models");
-const { sanitizeFields, deleteFile } = require("../../utils/otherUtils");
+const { sanitizeFields, deleteFile, convertToJpeg } = require("../../utils/otherUtils");
 
 const allowedFields = ["car_id", "ziyarat_name", "price"];
 
 const createZiyarat = async (req, res) => {
   const sanitizedFields = sanitizeFields(allowedFields, req.body);
-  if (req.files["ziyarat_image"] && req.files["ziyarat_image"].length > 0)
-    sanitizedFields.image = `${req.files["ziyarat_image"][0].destination.substring(7)}/${
-      req.files["ziyarat_image"][0].filename
-    }`;
-
-  if (Object.keys(req.body).length === 0) {
-    deleteFile(sanitizedFields.image);
-    return res.status(400).json({ data: "Bad Request!" });
-  }
 
   const t = await db.sequelize.transaction();
 
   try {
+    if (req.files["ziyarat_image"] && req.files["ziyarat_image"].length > 0) {
+      sanitizedFields.image = `${req.files["ziyarat_image"][0].destination.substring(7)}/${
+        req.files["ziyarat_image"][0].filename
+      }`;
+      // If the file is in binary (sent from a flutter web application)
+      if (!sanitizedFields.image?.split(".")[1]) {
+        const format = await convertToJpeg(
+          `${sanitizedFields.image}`,
+          `${sanitizedFields.image}.jpeg`
+        );
+        sanitizedFields.image = sanitizedFields.image?.concat(".", format);
+      }
+    }
+
+    if (Object.keys(req.body).length === 0) {
+      deleteFile(sanitizedFields.image);
+      return res.status(400).json({ data: "Bad Request!" });
+    }
+
     const sanitizedZiyaratPoints = JSON.parse(req.body?.ziyarat_points);
     const ziyarat = await db.category.create(sanitizedFields, { transaction: t });
 
@@ -40,24 +50,29 @@ const createZiyarat = async (req, res) => {
 const updateZiyarat = async (req, res) => {
   let image = false;
   const { ziyaratId } = req.query;
-
   const sanitizedFields = sanitizeFields(allowedFields, req.body);
-
-  if (req.files["ziyarat_image"] && req.files["ziyarat_image"].length > 0) {
-    image = true;
-    sanitizedFields.image = `${req.files["ziyarat_image"][0].destination.substring(7)}/${
-      req.files["ziyarat_image"][0].filename
-    }`;
-  }
-
-  if (!ziyaratId || Object.keys(req.body).length === 0) {
-    deleteFile(sanitizedFields.image);
-    return res.status(400).json({ data: "Bad Request!" });
-  }
-
   const t = await db.sequelize.transaction();
 
   try {
+    if (req.files["ziyarat_image"] && req.files["ziyarat_image"].length > 0) {
+      image = true;
+      sanitizedFields.image = `${req.files["ziyarat_image"][0].destination.substring(7)}/${
+        req.files["ziyarat_image"][0].filename
+      }`;
+      // If the file is in binary (sent from a flutter web application)
+      if (!sanitizedFields.image?.split(".")[1]) {
+        const format = await convertToJpeg(
+          `${sanitizedFields.image}`,
+          `${sanitizedFields.image}.jpeg`
+        );
+        sanitizedFields.image = sanitizedFields.image?.concat(".", format);
+      }
+    }
+
+    if (!ziyaratId || Object.keys(req.body).length === 0) {
+      deleteFile(sanitizedFields.image);
+      return res.status(400).json({ data: "Bad Request!" });
+    }
     const sanitizedZiyaratPoints = JSON.parse(req.body?.ziyarat_points);
     const ziyarat = await db.category.findByPk(ziyaratId);
     if (!ziyarat) {

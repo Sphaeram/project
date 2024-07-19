@@ -14,9 +14,21 @@ router.post(
   packageController.createPackage
 );
 
-router.put("/update", packageController.updatePackageById);
+router.put(
+  "/update",
+  (req, res, next) => {
+    req.destination = "package";
+    next();
+  },
+  upload,
+  handlingMulterError,
+  packageController.updatePackageById
+);
 
-router.get("/", packageController.getAllPackages).get("/package", packageController.getPackageById);
+router
+  .get("/", packageController.getAllPackages)
+  .get("/package", packageController.getPackageById)
+  .get("/car-packages", packageController.getPackagesByCarId);
 
 router.delete("/delete", packageController.deletePackageById);
 

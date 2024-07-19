@@ -4,7 +4,7 @@ const { sanitizeFields, deleteFile } = require("../../utils/otherUtils");
 const allowedFields = ["car_id", "ziyarat_name", "price"];
 
 const createZiyarat = async (req, res) => {
-  const sanitizedFields = {};
+  const sanitizedFields = sanitizeFields(allowedFields, req.body);
   if (req.files["ziyarat_image"] && req.files["ziyarat_image"].length > 0)
     sanitizedFields.image = `${req.files["ziyarat_image"][0].destination.substring(7)}/${
       req.files["ziyarat_image"][0].filename
@@ -15,15 +15,10 @@ const createZiyarat = async (req, res) => {
     return res.status(400).json({ data: "Bad Request!" });
   }
 
-  sanitizedFields = sanitizeFields(allowedFields, req.body);
-  req.body.ziyarat_points = JSON.parse(req.body?.ziyarat_points);
-  const sanitizedZiyaratPoints = req.body?.ziyarat_points?.filter((ziyarat_point) => {
-    if (ziyarat_point !== null || ziyarat_point !== undefined) return ziyarat_point;
-  });
-
   const t = await db.sequelize.transaction();
 
   try {
+    const sanitizedZiyaratPoints = JSON.parse(req.body?.ziyarat_points);
     const ziyarat = await db.category.create(sanitizedFields, { transaction: t });
 
     await db.sub_category.create(
@@ -47,10 +42,6 @@ const updateZiyarat = async (req, res) => {
   const { ziyaratId } = req.query;
 
   const sanitizedFields = sanitizeFields(allowedFields, req.body);
-  req.body.ziyarat_points = JSON.parse(req.body?.ziyarat_points);
-  const sanitizedZiyaratPoints = req.body?.ziyarat_points?.filter((ziyarat_point) => {
-    if (ziyarat_point !== null || ziyarat_point !== undefined) return ziyarat_point;
-  });
 
   if (req.files["ziyarat_image"] && req.files["ziyarat_image"].length > 0) {
     image = true;
@@ -67,6 +58,7 @@ const updateZiyarat = async (req, res) => {
   const t = await db.sequelize.transaction();
 
   try {
+    const sanitizedZiyaratPoints = JSON.parse(req.body?.ziyarat_points);
     const ziyarat = await db.category.findByPk(ziyaratId);
     if (!ziyarat) {
       deleteFile(sanitizedFields.image);

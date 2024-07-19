@@ -6,8 +6,6 @@ const path = require("path");
 const { customCorsOptions } = require("./config/cors");
 const cors = require("cors");
 const morgan = require("morgan");
-const sharp = require("sharp");
-const fs = require("fs");
 
 config();
 
@@ -20,24 +18,23 @@ app.use(morgan("dev"));
 
 app.use(cors(customCorsOptions));
 
-// app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/images", async (req, res, next) => {
-  const imagePath = path.join(__dirname, "public/images", req.path);
+//   const imagePath = path.join(__dirname, "public/images", req.path);
 
-  if (!fs.existsSync(imagePath)) return next();
+//   if (!fs.existsSync(imagePath)) return next();
 
-  const ext = path.extname(imagePath).toLowerCase();
-  if (ext !== ".jpg" && ext !== ".jpeg" && ext !== ".png" && ext !== ".webp") return next();
+//   const ext = path.extname(imagePath).toLowerCase();
+//   if (ext !== ".jpg" && ext !== ".jpeg" && ext !== ".png" && ext !== ".webp") return next();
 
-  try {
-    const data = fs.readFileSync(imagePath);
-    const processedImage = await sharp(data).toBuffer();
-    return res.type(`image/${ext.slice(1)}`).send(processedImage);
-  } catch (err) {
-    return res.status(500).send("Error processing image.");
-  }
-});
+//   try {
+//     const data = fs.readFileSync(imagePath);
+//     const processedImage = await sharp(data).toBuffer();
+//     return res.type(`image/${ext.slice(1)}`).send(processedImage);
+//   } catch (err) {
+//     return res.status(500).send("Error processing image.");
+//   }
+// });
 
 app.use("/testing", (req, res) => res.status(200).send("<center><h1>Testing...</h1></center>"));
 

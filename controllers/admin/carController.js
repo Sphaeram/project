@@ -1,5 +1,5 @@
 const db = require("../../models");
-const { sanitizeFields, deleteLocalFile, deleteFile } = require("../../utils/otherUtils");
+const { sanitizeFields, deleteFile, convertToJpeg } = require("../../utils/otherUtils");
 const path = require("path");
 
 const allowedFields = [
@@ -15,12 +15,25 @@ const allowedFields = [
 module.exports = {
   createCar: async (req, res, next) => {
     const sanitizedFields = sanitizeFields(allowedFields, req.body);
-    if (req.files && req.files["car_image"] && req.files["car_image"].length > 0)
-      sanitizedFields.image = `${req.files["car_image"][0].destination.substring(7)}/${
-        req.files["car_image"][0].filename
-      }`;
 
     try {
+      if (req.files && req.files["car_image"] && req.files["car_image"].length > 0) {
+        sanitizedFields.image = `${req.files["car_image"][0].destination.substring(7)}/${
+          req.files["car_image"][0].filename
+        }`;
+        if (!sanitizedFields.image?.split(".")[1]) {
+          const format = await convertToJpeg(
+            `${sanitizedFields.image}`,
+            `${sanitizedFields.image}.jpeg`
+          );
+          sanitizedFields.image = sanitizedFields.image?.concat(".", format);
+        }
+      }
+      if (Object.keys(req.body).length === 0) {
+        deleteFile(sanitizedFields.image);
+        return res.status(400).json({ data: "Bad Request!" });
+      }
+
       const car = await db.car.create(sanitizedFields);
       return res.status(200).json({ data: car });
     } catch (error) {
@@ -32,26 +45,36 @@ module.exports = {
   },
 
   updateCarById: async (req, res, next) => {
-    const { carId } = req.query;
     let image = false;
-
+    const { carId } = req.query;
     const sanitizedFields = sanitizeFields(allowedFields, req.body);
 
-    if (req.files && req.files["car_image"] && req.files["car_image"].length > 0) {
-      image = true;
-      sanitizedFields.image = `${req.files["car_image"][0].destination.substring(7)}/${
-        req.files["car_image"][0].filename
-      }`;
-    }
-
     try {
-      if (!carId) throw new Error("Bad Request!");
+      if (req.files && req.files["car_image"] && req.files["car_image"].length > 0) {
+        image = true;
+        sanitizedFields.image = `${req.files["car_image"][0].destination.substring(7)}/${
+          req.files["car_image"][0].filename
+        }`;
+        if (!sanitizedFields.image?.split(".")[1]) {
+          const format = await convertToJpeg(
+            `${sanitizedFields.image}`,
+            `${sanitizedFields.image}.jpeg`
+          );
+          sanitizedFields.image = sanitizedFields.image?.concat(".", format);
+        }
+      }
+      if (!carId || isNaN(carId) || Object.keys(req.body).length === 0) {
+        deleteFile(sanitizedFields.image);
+        return res.status(400).json({ data: "Bad Request!" });
+      }
 
       const car = await db.car.findByPk(carId);
-      if (!car) throw new Error("No Car Found!");
+      if (!car) {
+        deleteFile(sanitizedFields.image);
+        return res.status(404).json({ data: "Car Not Found!" });
+      }
 
-      const [rowsAffected] = await db.car.update(sanitizedFields, { where: { id: car.id } });
-      if (rowsAffected === 0) return res.status(404).json({ data: "Car Not Updated!" });
+      await db.car.update(sanitizedFields, { where: { id: car.id } });
 
       if (image) deleteFile(car.image);
 

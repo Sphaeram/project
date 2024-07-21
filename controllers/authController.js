@@ -66,7 +66,7 @@ module.exports = {
         {
           id: user.id,
           email: user.email,
-          name: user.name,
+          username: user.username,
           user_type_id: user.user_type_id,
         },
         ACCESS_TOKEN_SECRET
@@ -75,7 +75,7 @@ module.exports = {
       const userData = {
         id: user.id,
         email: user.email,
-        name: user.name,
+        username: user.username,
         user_type_id: user.user_type_id,
         accessToken: accessToken,
       };

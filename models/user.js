@@ -61,19 +61,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
-<<<<<<< HEAD
-      email_verified: {
-        allowNull: false,
-        defaultValue: 1,
-        type: DataTypes.TINYINT,
-      },
-      last_login_at: {
-        allowNull: false,
-        defaultValue: "",
-        type: DataTypes.STRING,
-      },
-=======
->>>>>>> development
       deletedAt: {
         type: DataTypes.DATE,
       },

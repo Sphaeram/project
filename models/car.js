@@ -57,6 +57,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
+      booked: {
+        allowNull: false,
+        defaultValue: 0,
+        type: DataTypes.TINYINT,
+      },
       deletedAt: {
         type: DataTypes.DATE,
       },

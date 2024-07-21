@@ -86,6 +86,23 @@ module.exports = {
     }
   },
 
+  updateCarBookedStatus: async (req, res) => {
+    const { carId } = req.query;
+    const { status } = req.body;
+    if (!carId || isNaN(carId) || (status !== true && status !== false))
+      return res.status(400).json({ data: "Bad Request!" });
+    try {
+      const car = await db.car.findByPk(carId);
+      if (!car) return res.status(404).json({ data: "Car not found!" });
+
+      await db.car.update({ booked: status }, { where: { id: carId } });
+
+      return res.status(200).json({ data: "status updated!" });
+    } catch (error) {
+      return res.status(500).json({ data: error.message });
+    }
+  },
+
   getAllCars: async (req, res, next) => {
     try {
       const cars = await db.car.findAll();
@@ -116,8 +133,9 @@ module.exports = {
     if (!carId) return res.status(400).json({ data: "Bad Request!" });
 
     try {
-      const car = await db.car.findByPk(carId);
+      const car = await db.car.findByPk(carId, { raw: true });
       if (!car) return res.status(404).json({ data: "No Car Found!" });
+      if (car.booked) return res.status(403).json({ data: "Car is booked and can't be deleted!" });
 
       await db.car.destroy({ where: { id: carId } });
       await db.car_package.destroy({ where: { car_id: carId } });

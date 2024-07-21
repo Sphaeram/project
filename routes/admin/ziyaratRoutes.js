@@ -6,12 +6,14 @@ const {
   getZiyaratsByCarId,
   deleteZiyaratById,
 } = require("../../controllers/admin/ziyaratController");
+const { verifyAdmin } = require("../../middlewares/verify");
 const { upload, handlingMulterError } = require("../../utils/multerUtil");
 
 const router = require("express").Router();
 
 router.post(
   "/create",
+  verifyAdmin,
   (req, res, next) => {
     req.destination = "ziyarat";
     next();
@@ -23,6 +25,7 @@ router.post(
 
 router.put(
   "/update",
+  verifyAdmin,
   (req, res, next) => {
     req.destination = "ziyarat";
     next();
@@ -37,6 +40,6 @@ router
   .get("/ziyarat", getZiyaratById)
   .get("/car-ziyarats", getZiyaratsByCarId);
 
-router.delete("/delete", deleteZiyaratById);
+router.delete("/delete", verifyAdmin, deleteZiyaratById);
 
 module.exports = router;

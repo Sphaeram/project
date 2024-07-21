@@ -1,10 +1,12 @@
 const packageController = require("../../controllers/admin/packageController");
+const { verifyAdmin } = require("../../middlewares/verify");
 const { handlingMulterError, upload } = require("../../utils/multerUtil");
 
 const router = require("express").Router();
 
 router.post(
   "/create",
+  verifyAdmin,
   (req, res, next) => {
     req.destination = "package";
     next();
@@ -16,6 +18,7 @@ router.post(
 
 router.put(
   "/update",
+  verifyAdmin,
   (req, res, next) => {
     req.destination = "package";
     next();
@@ -30,6 +33,6 @@ router
   .get("/package", packageController.getPackageById)
   .get("/car-packages", packageController.getPackagesByCarId);
 
-router.delete("/delete", packageController.deletePackageById);
+router.delete("/delete", verifyAdmin, packageController.deletePackageById);
 
 module.exports = router;

@@ -1,11 +1,66 @@
 const db = require("../../models");
+const moment = require("moment-timezone");
+const { TIME_ZONE } = require("../../utils/constants");
 
 module.exports = {
-  getAllBookings: async (req, res, next) => {
+  updateBookingStatus: async (req, res) => {
+    const { bookingId } = req.query;
+    let t = "";
+    if (
+      !bookingId ||
+      isNaN(bookingId) ||
+      !["pending approval", "confirmed", "on route", "compelete"].includes(
+        req.body.status?.toLowerCase()
+      )
+    )
+      return res.status(400).json({ data: "Bad Request!" });
+    if (req.body.status === "compelete") t = await db.sequelize.transaction();
+
     try {
-      const bookings = await db.booking.findAll();
+      const booking = await db.booking.findByPk(bookingId);
+      if (!booking) return res.status(404).json({ data: "Booking not found!" });
+
+      if (req.body.status === "compelete") {
+        await db.booking.update(
+          { status: req.body.status },
+          { where: { id: booking.id }, transaction: t }
+        );
+        await db.car.update({ booked: 0 }, { where: { id: booking.car_id }, transaction: t });
+        await t.commit();
+      } else {
+        await db.booking.update({ status: req.body.status }, { where: { id: bookingId } });
+      }
+
+      return res.status(200).json({ data: "Booking Status Updated Successfully!" });
+    } catch (error) {
+      if (req.body.status === "compelete") await t.rollback();
+      return res.status(500).json({ data: error.message });
+    }
+  },
+  getAllBookings: async (req, res) => {
+    try {
+      const bookings = await db.booking.findAll({
+        include: [
+          {
+            model: db.user,
+            attributes: ["id", "name", "username"],
+            include: { model: db.user_type, attributes: ["title"] },
+          },
+          {
+            model: db.car,
+            attributes: ["id", "type", "driver_name", "number_plate"],
+          },
+        ],
+      });
       if (!bookings || bookings.length === 0)
         return res.status(404).json({ data: "No Bookings Found!" });
+
+      bookings.forEach((booking) => {
+        booking.booking_date = moment
+          .utc(booking.booking_date)
+          .tz(TIME_ZONE)
+          .format("YYYY-MM-DD h:mm A");
+      });
 
       return res.status(200).json({ data: bookings });
     } catch (error) {
@@ -13,12 +68,29 @@ module.exports = {
     }
   },
 
-  getBookingById: async (req, res, next) => {
+  getBookingById: async (req, res) => {
     const { bookingId } = req.query;
     if (!bookingId) return res.status(400).json({ data: "Bad Request!" });
     try {
-      const booking = await db.booking.findByPk(bookingId);
+      const booking = await db.booking.findByPk(bookingId, {
+        include: [
+          {
+            model: db.user,
+            attributes: ["id", "name", "username"],
+            include: { model: db.user_type, attributes: ["title"] },
+          },
+          {
+            model: db.car,
+            attributes: ["id", "type", "driver_name", "number_plate"],
+          },
+        ],
+      });
       if (!booking) return res.status(404).json({ data: "No Booking Found!" });
+
+      booking.booking_date = moment
+        .utc(booking.booking_date)
+        .tz(TIME_ZONE)
+        .format("YYYY-MM-DD h:mm A");
 
       return res.status(200).json({ data: booking });
     } catch (error) {
@@ -26,7 +98,7 @@ module.exports = {
     }
   },
 
-  deleteBookingById: async (req, res, next) => {
+  deleteBookingById: async (req, res) => {
     const { bookingId } = req.query;
     if (!bookingId) return res.status(400).json({ data: "Bad Request!" });
     try {

@@ -11,11 +11,20 @@ module.exports = {
       },
       code: {
         allowNull: false,
+        unique: true,
         type: Sequelize.STRING,
       },
       discount: {
         allowNull: false,
         type: Sequelize.DOUBLE,
+      },
+      valid_from: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      valid_to: {
+        allowNull: false,
+        type: Sequelize.DATE,
       },
       status: {
         allowNull: false,

@@ -44,11 +44,6 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       },
-      name: {
-        allowNull: false,
-        defaultValue: "",
-        type: DataTypes.STRING,
-      },
       email: {
         allowNull: false,
         unique: true,
@@ -56,7 +51,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       username: {
         allowNull: false,
-        unique: true,
         type: DataTypes.STRING,
       },
       password: {
@@ -67,6 +61,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
+<<<<<<< HEAD
       email_verified: {
         allowNull: false,
         defaultValue: 1,
@@ -77,6 +72,8 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: "",
         type: DataTypes.STRING,
       },
+=======
+>>>>>>> development
       deletedAt: {
         type: DataTypes.DATE,
       },

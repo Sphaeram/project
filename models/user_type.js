@@ -27,14 +27,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      deletedAt: {
-        type: DataTypes.DATE,
-      },
     },
     {
       sequelize,
       modelName: "user_type",
-      paranoid: true,
     }
   );
   return user_type;

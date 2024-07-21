@@ -10,6 +10,7 @@ const couponRouter = require("./couponRoutes");
 const reviewRouter = require("./reviewRoutes");
 const bookingRouter = require("./bookingRoutes");
 const reportRouter = require("./reportRoutes");
+const { verifyAdmin } = require("../../middlewares/verify");
 
 router.use("/airport-fares", airportFareRouter);
 router.use("/railway-fares", railwayFareRouter);
@@ -20,7 +21,7 @@ router.use("/ziyarats", ziyaratRouter);
 router.use("/users", userRouter);
 router.use("/coupons", couponRouter);
 router.use("/reviews", reviewRouter);
-router.use("/bookings", bookingRouter);
-router.use("/reports", reportRouter);
+router.use("/bookings", verifyAdmin, bookingRouter);
+router.use("/reports", verifyAdmin, reportRouter);
 
 module.exports = router;

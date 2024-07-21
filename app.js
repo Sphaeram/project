@@ -6,11 +6,11 @@ const path = require("path");
 const { customCorsOptions } = require("./config/cors");
 const cors = require("cors");
 const morgan = require("morgan");
+const { PORT } = require("./utils/constants");
 
 config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
 /******** MIDDLEWARES ********/
 
@@ -22,7 +22,6 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/testing", (req, res) => res.status(200).send("<center><h1>Testing...</h1></center>"));
 
-//* Validate JSON Body
 app.use(
   express.json({
     verify: (req, res, buf, encoding) => {

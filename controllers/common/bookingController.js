@@ -15,8 +15,6 @@ const createBooking = async (req, res) => {
       .replace(/[:]/g, "")
       .replace(/\s/g, "-")}`;
 
-    // return res.json(bookingData.booking_date);
-
     const booking = await db.booking.create(bookingData, { transaction: t });
 
     await db.car.update({ booked: 1 }, { where: { id: bookingData.car_id }, transaction: t });

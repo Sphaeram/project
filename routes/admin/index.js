@@ -22,6 +22,6 @@ router.use("/users", userRouter);
 router.use("/coupons", couponRouter);
 router.use("/reviews", reviewRouter);
 router.use("/bookings", verifyAdmin, bookingRouter);
-router.use("/reports", reportRouter);
+router.use("/reports", verifyAdmin, reportRouter);
 
 module.exports = router;

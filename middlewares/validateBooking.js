@@ -7,6 +7,7 @@ const validateBooking = async (req, res, next) => {
     bookingId = "",
     foundCarId = 0,
     price = 0;
+  discount = 0;
   const sanitizedFields = sanitizeFields(
     ["car_id", "booking_type", "booking_type_id", "pickup_point", "drop_point", "coupon"],
     req.body
@@ -82,6 +83,8 @@ const validateBooking = async (req, res, next) => {
       req.coupon = couponResult;
     }
 
+    if (req.coupon?.id) discount = parseFloat(req.coupon?.discount);
+
     const bookingData = {
       booking_id: bookingId + req.user.id,
       user_id: req.user.id,
@@ -92,8 +95,8 @@ const validateBooking = async (req, res, next) => {
       drop_point: sanitizedFields.drop_point,
       coupon: req.coupon?.id ? sanitizedFields.coupon : "",
       sub_total: parseFloat(price),
-      discount: req.coupon?.id ? parseFloat(req.coupon?.discount) : 0,
-      total_price: parseFloat(price) - parseFloat(req.coupon?.discount),
+      discount: discount,
+      total_price: parseFloat(price) - parseFloat(discount),
     };
 
     req.sanitizedFields = bookingData;

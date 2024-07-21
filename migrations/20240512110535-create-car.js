@@ -23,6 +23,7 @@ module.exports = {
       },
       number_plate: {
         allowNull: false,
+        unique: true,
         type: Sequelize.STRING,
       },
       seating_capacity: {
@@ -36,6 +37,11 @@ module.exports = {
       image: {
         allowNull: false,
         type: Sequelize.STRING,
+      },
+      booked: {
+        allowNull: false,
+        defaultValue: 0,
+        type: Sequelize.TINYINT,
       },
       deletedAt: {
         type: Sequelize.DATE,

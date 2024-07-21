@@ -140,7 +140,7 @@ module.exports = {
   getAllPackages: async (req, res, next) => {
     try {
       const packages = await db.package.findAll({
-        include: { model: db.car, through: { attributes: [] } },
+        include: { model: db.car, through: { attributes: ["price"] } },
       });
       return res.status(200).json({ data: packages });
     } catch (error) {

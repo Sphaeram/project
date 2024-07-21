@@ -6,11 +6,11 @@ const path = require("path");
 const { customCorsOptions } = require("./config/cors");
 const cors = require("cors");
 const morgan = require("morgan");
+const { PORT } = require("./utils/constants");
 
 config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
 /******** MIDDLEWARES ********/
 
@@ -20,23 +20,8 @@ app.use(cors(customCorsOptions));
 
 app.use(express.static(path.join(__dirname, "public")));
 
-//   const imagePath = path.join(__dirname, "public/images", req.path);
+app.use("/testing", (req, res) => res.status(200).send("<center><h1>Testing...</h1></center>"));
 
-//   if (!fs.existsSync(imagePath)) return next();
-
-//   const ext = path.extname(imagePath).toLowerCase();
-//   if (ext !== ".jpg" && ext !== ".jpeg" && ext !== ".png" && ext !== ".webp") return next();
-
-//   try {
-//     const data = fs.readFileSync(imagePath);
-//     const processedImage = await sharp(data).toBuffer();
-//     return res.type(`image/${ext.slice(1)}`).send(processedImage);
-//   } catch (err) {
-//     return res.status(500).send("Error processing image.");
-//   }
-// });
-
-//* Validate JSON Body
 app.use(
   express.json({
     verify: (req, res, buf, encoding) => {

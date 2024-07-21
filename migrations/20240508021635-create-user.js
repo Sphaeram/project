@@ -18,11 +18,6 @@ module.exports = {
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       },
-      name: {
-        allowNull: false,
-        defaultValue: "",
-        type: Sequelize.STRING,
-      },
       email: {
         allowNull: false,
         unique: true,
@@ -30,7 +25,6 @@ module.exports = {
       },
       username: {
         allowNull: false,
-        unique: true,
         type: Sequelize.STRING,
       },
       password: {
@@ -39,16 +33,6 @@ module.exports = {
       },
       phone_no: {
         allowNull: false,
-        type: Sequelize.STRING,
-      },
-      email_verified: {
-        allowNull: false,
-        defaultValue: 0,
-        type: Sequelize.TINYINT,
-      },
-      last_login_at: {
-        allowNull: false,
-        defaultValue: "",
         type: Sequelize.STRING,
       },
       deletedAt: {

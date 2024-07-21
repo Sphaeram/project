@@ -9,6 +9,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.BIGINT,
       },
+      booking_id: {
+        unique: true,
+        type: Sequelize.STRING,
+      },
       user_id: {
         allowNull: false,
         type: Sequelize.BIGINT,
@@ -16,15 +20,6 @@ module.exports = {
           model: "users",
           key: "id",
         },
-        onUpdate: "CASCADE",
-      },
-      coupon_id: {
-        type: Sequelize.BIGINT,
-        references: {
-          model: "coupons",
-          key: "id",
-        },
-        onDelete: "SET NULL",
         onUpdate: "CASCADE",
       },
       car_id: {
@@ -36,33 +31,26 @@ module.exports = {
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       },
-      package_id: {
-        type: Sequelize.BIGINT,
-        references: {
-          model: "packages",
-          key: "id",
-        },
-        onDelete: "SET NULL",
-        onUpdate: "CASCADE",
-      },
-      fare_type: {
+      booking_type: {
+        allowNull: false,
         type: Sequelize.STRING,
+      },
+      booking_type_id: {
+        allowNull: false,
+        type: Sequelize.BIGINT,
       },
       pickup_point: {
         type: Sequelize.STRING,
       },
-      destination_point: {
+      drop_point: {
         type: Sequelize.STRING,
-      },
-      pickup_time: {
-        type: Sequelize.TIME,
-      },
-      pickup_date: {
-        type: Sequelize.DATE,
       },
       sub_total: {
         allowNull: false,
         type: Sequelize.DOUBLE,
+      },
+      coupon: {
+        type: Sequelize.STRING,
       },
       discount: {
         allowNull: false,
@@ -73,24 +61,14 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DOUBLE,
       },
-      payment_method: {
-        allowNull: false,
-        defaultValue: "Cash",
-        type: Sequelize.STRING,
-      },
-      payment_status: {
-        allowNull: false,
-        defaultValue: 0,
-        type: Sequelize.TINYINT,
-      },
       status: {
         allowNull: false,
-        defaultValue: "pending",
-        type: Sequelize.ENUM("pending", "confirmed", "cancelled"),
+        defaultValue: "pending approval",
+        type: Sequelize.ENUM("pending approval", "confirmed", "on route", "compelete"),
       },
       booking_date: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.STRING,
       },
       deletedAt: {
         type: Sequelize.DATE,

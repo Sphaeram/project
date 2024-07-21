@@ -8,7 +8,6 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      coupon.hasMany(models.booking, { foreignKey: "coupon_id", onDelete: "SET NULL" });
       coupon.hasMany(models.coupon_collected, { foreignKey: "coupon_id", onDelete: "SET NULL" });
     }
   }
@@ -22,11 +21,20 @@ module.exports = (sequelize, DataTypes) => {
       },
       code: {
         allowNull: false,
+        unique: true,
         type: DataTypes.STRING,
       },
       discount: {
         allowNull: false,
         type: DataTypes.DOUBLE,
+      },
+      valid_from: {
+        allowNull: false,
+        type: DataTypes.DATE,
+      },
+      valid_to: {
+        allowNull: false,
+        type: DataTypes.DATE,
       },
       status: {
         allowNull: false,

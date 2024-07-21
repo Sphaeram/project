@@ -2,11 +2,12 @@ const db = require("../models");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { sanitizeFields } = require("../utils/otherUtils");
+const { ACCESS_TOKEN_SECRET } = require("../utils/constants");
 
 module.exports = {
   signUp: async (req, res, next) => {
+    const { type } = req.query;
     const sanitizedFields = sanitizeFields(["email", "username", "password", "phone_no"], req.body);
-    sanitizedFields.is_email_verified = 1;
 
     if (
       !sanitizedFields.email ||
@@ -33,6 +34,7 @@ module.exports = {
 
       const salt = bcrypt.genSaltSync(10);
       sanitizedFields.password = bcrypt.hashSync(sanitizedFields.password, salt);
+      if (type === "agency") sanitizedFields.user_type_id = 7180;
 
       const createdUser = await db.user.create(sanitizedFields);
 
@@ -67,8 +69,7 @@ module.exports = {
           name: user.name,
           user_type_id: user.user_type_id,
         },
-        process.env.ACCESS_TOKEN_SECRET
-        //   { expiresIn: "900s" }
+        ACCESS_TOKEN_SECRET
       );
 
       const userData = {

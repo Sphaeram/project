@@ -3,7 +3,9 @@ const db = require("../../models/index");
 module.exports = {
   getAllUsers: async (req, res, next) => {
     try {
-      const users = await db.user.findAll();
+      const users = await db.user.findAll({
+        include: { model: db.user_type, attributes: ["title"] },
+      });
       return res.status(200).json({ data: users });
     } catch (error) {
       return res.status(500).json({ data: error.message });
@@ -14,7 +16,9 @@ module.exports = {
     const { userId } = req.query;
     if (!userId) return res.status(400).json({ data: "Bad Request!" });
     try {
-      const user = await db.user.findByPk(userId);
+      const user = await db.user.findByPk(userId, {
+        include: { model: db.user_type, attributes: ["title"] },
+      });
       if (!user) return res.status(404).json({ data: "User Not Found!" });
       return res.status(200).json({ data: user });
     } catch (error) {

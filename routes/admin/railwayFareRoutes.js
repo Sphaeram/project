@@ -5,12 +5,14 @@ const {
   getRailwayFareById,
   deleteRailwayFare,
 } = require("../../controllers/admin/railwayFareController");
+const { verifyAdmin } = require("../../middlewares/verify");
 const { upload, handlingMulterError } = require("../../utils/multerUtil");
 
 const router = require("express").Router();
 
 router.post(
   "/create",
+  verifyAdmin,
   (req, res, next) => {
     req.destination = "railway_station";
     next();
@@ -22,6 +24,7 @@ router.post(
 
 router.put(
   "/update",
+  verifyAdmin,
   (req, res, next) => {
     req.destination = "railway_station";
     next();
@@ -33,6 +36,6 @@ router.put(
 
 router.get("/", getAllRailwayFares).get("/railway-fare", getRailwayFareById);
 
-router.delete("/delete", deleteRailwayFare);
+router.delete("/delete", verifyAdmin, deleteRailwayFare);
 
 module.exports = router;

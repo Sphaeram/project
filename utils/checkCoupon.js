@@ -1,20 +1,15 @@
 const db = require("../models");
 const moment = require("moment-timezone");
+const { TIME_ZONE } = require("./constants");
 
-const TIME_ZONE = "Asia/karachi";
-
-const checkCoupon = async (user_id, code) => {
+const checkCoupon = async (user_id, coupon) => {
   try {
-    const foundCoupon = await db.coupon.findOne({
-      attributes: { exclude: ["createdAt", "updatedAt"] },
-      where: { code: code },
-      raw: true,
-    });
+    const foundCoupon = await db.coupon.findOne({ where: { code: coupon }, raw: true });
     if (!foundCoupon) return { status: 404, message: "Coupon Not Found!" };
 
     const validFrom = moment(foundCoupon.valid_from).tz(TIME_ZONE);
     const validTo = moment(foundCoupon.valid_to).tz(TIME_ZONE);
-    const currentDate = moment().tz(TIME_ZONE);
+    const currentDate = moment().tz(TIME_ZONE).startOf("day");
 
     if (currentDate.isBefore(validFrom)) {
       return {
@@ -32,9 +27,14 @@ const checkCoupon = async (user_id, code) => {
       raw: true,
     });
 
-    if (couponsUsed.length === 0 || couponsUsed.length < foundCoupon.uses_per_user)
+    if (couponsUsed.length === 0 || couponsUsed.length < foundCoupon.uses_per_user) {
+      foundCoupon.valid_from = moment
+        .utc(foundCoupon.valid_from)
+        .tz(TIME_ZONE)
+        .format("YYYY-MM-DD");
+      foundCoupon.valid_to = moment.utc(foundCoupon.valid_to).tz(TIME_ZONE).format("YYYY-MM-DD");
       return foundCoupon;
-    else return { status: 403, message: "You can't use this coupon anymore!" };
+    } else return { status: 403, message: "You already used this coupon!" };
   } catch (error) {
     return { status: 500, message: error.message };
   }

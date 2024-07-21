@@ -9,18 +9,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       booking.hasMany(models.coupon_collected, { foreignKey: "booking_id", onDelete: "SET NULL" });
-
       booking.belongsTo(models.user, { foreignKey: "user_id", onUpdate: "CASCADE" });
-      booking.belongsTo(models.coupon, {
-        foreignKey: "coupon_id",
-        onDelete: "SET NULL",
-      });
       booking.belongsTo(models.car, {
         foreignKey: "car_id",
-        onDelete: "SET NULL",
-      });
-      booking.belongsTo(models.package, {
-        foreignKey: "package_id",
         onDelete: "SET NULL",
       });
     }
@@ -33,6 +24,10 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: DataTypes.BIGINT,
       },
+      booking_id: {
+        unique: true,
+        type: DataTypes.STRING,
+      },
       user_id: {
         allowNull: false,
         type: DataTypes.BIGINT,
@@ -40,15 +35,6 @@ module.exports = (sequelize, DataTypes) => {
           model: "users",
           key: "id",
         },
-        onUpdate: "CASCADE",
-      },
-      coupon_id: {
-        type: DataTypes.BIGINT,
-        references: {
-          model: "coupons",
-          key: "id",
-        },
-        onDelete: "SET NULL",
         onUpdate: "CASCADE",
       },
       car_id: {
@@ -60,42 +46,26 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       },
-      package_id: {
-        type: DataTypes.BIGINT,
-        references: {
-          model: "packages",
-          key: "id",
-        },
-        onDelete: "SET NULL",
-        onUpdate: "CASCADE",
-      },
-      fare_id: {
-        type: DataTypes.BIGINT,
-        references: {
-          model: "fares",
-          key: "id",
-        },
-        onDelete: "SET NULL",
-        onUpdate: "CASCADE",
-      },
-      fare_type: {
+      booking_type: {
+        allowNull: false,
         type: DataTypes.STRING,
+      },
+      booking_type_id: {
+        allowNull: false,
+        type: DataTypes.BIGINT,
       },
       pickup_point: {
         type: DataTypes.STRING,
       },
-      pickup_time: {
-        type: DataTypes.TIME,
-      },
-      pickup_date: {
-        type: DataTypes.DATE,
-      },
-      destination_point: {
+      drop_point: {
         type: DataTypes.STRING,
       },
       sub_total: {
         allowNull: false,
         type: DataTypes.DOUBLE,
+      },
+      coupon: {
+        type: DataTypes.STRING,
       },
       discount: {
         allowNull: false,
@@ -106,24 +76,14 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.DOUBLE,
       },
-      payment_method: {
-        allowNull: false,
-        defaultValue: "Cash",
-        type: DataTypes.STRING,
-      },
-      payment_status: {
-        allowNull: false,
-        defaultValue: 0,
-        type: DataTypes.TINYINT,
-      },
       status: {
         allowNull: false,
-        defaultValue: "pending",
-        type: DataTypes.ENUM("pending", "confirmed", "cancelled"),
+        defaultValue: "pending approval",
+        type: DataTypes.ENUM("pending approval", "confirmed", "on route", "compelete"),
       },
       booking_date: {
         allowNull: false,
-        type: DataTypes.DATE,
+        type: DataTypes.STRING,
       },
       deletedAt: {
         type: DataTypes.DATE,

@@ -6,10 +6,11 @@ const validateBooking = async (req, res, next) => {
   let booking_type = "",
     bookingId = "",
     foundCarId = 0,
-    price = 0;
-  discount = 0;
+    price = 0,
+    discount = 0;
+
   const sanitizedFields = sanitizeFields(
-    ["car_id", "booking_type", "booking_type_id", "pickup_point", "drop_point", "coupon"],
+    ["car_id", "booking_type", "booking_type_id", "pickup_point", "drop_point", "coupon", "fare"],
     req.body
   );
 
@@ -44,24 +45,15 @@ const validateBooking = async (req, res, next) => {
             price = car.car_package.price;
           }
         });
+        sanitizedFields.pickup_point = null;
+        sanitizedFields.drop_point = null;
         bookingId = "SFCP-";
         break;
 
-      case "airport":
-        booking_type = await db.airport_fare.findByPk(sanitizedFields.booking_type_id);
-        if (!booking_type) return res.status(404).json({ data: "Airport Not Found!" });
-        foundCarId = booking_type.car_id;
-        price = booking_type.fare;
-        sanitizedFields.pickup_point = booking_type.pickup_location;
-        sanitizedFields.drop_point = booking_type.drop_location;
-        bookingId = "SFCA-";
-        break;
-
-      case "railway":
-        booking_type = await db.railway_fare.findByPk(sanitizedFields.booking_type_id);
-        if (!booking_type) return res.status(404).json({ data: "Railway Station Not Found!" });
-        foundCarId = booking_type.car_id;
-        price = booking_type.fare;
+      case "ride":
+        if (isNaN(sanitizedFields.fare))
+          return res.status(403).json({ data: "The fare is not valid!" });
+        price = sanitizedFields.fare;
         sanitizedFields.pickup_point = booking_type.pickup_location;
         sanitizedFields.drop_point = booking_type.drop_location;
         bookingId = "SFCR-";

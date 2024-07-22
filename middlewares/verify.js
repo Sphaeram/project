@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
 const { config } = require("dotenv");
 const { ACCESS_TOKEN_SECRET } = require("../utils/constants");
+const db = require("../models");
+const { Op } = require("sequelize");
 
 config();
 
@@ -30,4 +32,21 @@ const verifyAdmin = async (req, res, next) => {
   });
 };
 
-module.exports = { verifyLogin, verifyAdmin };
+const verifyValidityForBooking = async (req, res, next) => {
+  if (!req.user.id) return res.status(403).json({ data: "SigIn First!" });
+  try {
+    const bookingsCount = await db.booking.count({
+      where: { user_id: req.user.id, status: { [Op.notIn]: ["complete", "cancelled"] } },
+    });
+
+    if (bookingsCount > 0) {
+      return res.status(403).json({ data: "You already have an active booking!" });
+    } else {
+      next();
+    }
+  } catch (error) {
+    return res.status(500).json({ data: error.message });
+  }
+};
+
+module.exports = { verifyLogin, verifyAdmin, verifyValidityForBooking };

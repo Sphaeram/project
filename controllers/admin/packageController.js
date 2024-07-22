@@ -1,7 +1,7 @@
 const db = require("../../models");
 const { sanitizeFields, deleteFile, convertToJpeg } = require("../../utils/otherUtils");
 
-const allowedFields = ["number_plate", "name", "details", "price"];
+const allowedFields = ["car_id", "name", "details", "price"];
 
 module.exports = {
   createPackage: async (req, res, next) => {
@@ -29,7 +29,7 @@ module.exports = {
       }
 
       const sanitizedDetails = JSON.parse(sanitizedFields.details);
-      const car = await db.car.findOne({ where: { number_plate: sanitizedFields.number_plate } });
+      const car = await db.car.findByPk(sanitizedFields.car_id);
       if (!car) {
         if (req.files["package_image"] && req.files["package_image"].length > 0)
           deleteFile(sanitizedFields.image);
@@ -71,7 +71,7 @@ module.exports = {
   updatePackageById: async (req, res, next) => {
     let image = false;
     const { packageId, carId } = req.query;
-    const sanitizedFields = sanitizeFields(allowedFields, req.body);
+    const sanitizedFields = sanitizeFields(["number_plate", ...allowedFields], req.body);
     const t = await db.sequelize.transaction();
 
     try {

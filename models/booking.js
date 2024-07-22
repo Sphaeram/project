@@ -79,7 +79,7 @@ module.exports = (sequelize, DataTypes) => {
       status: {
         allowNull: false,
         defaultValue: "pending approval",
-        type: DataTypes.ENUM("pending approval", "confirmed", "on route", "compelete", "cancelled"),
+        type: DataTypes.ENUM("pending approval", "confirmed", "on route", "complete", "cancelled"),
       },
       booking_date: {
         allowNull: false,

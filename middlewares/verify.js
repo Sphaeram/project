@@ -36,10 +36,11 @@ const verifyValidityForBooking = async (req, res, next) => {
   if (!req.user.id) return res.status(403).json({ data: "SigIn First!" });
   try {
     const bookingsCount = await db.booking.count({
-      where: { user_id: req.user.id, status: { [Op.ne]: "complete" } },
+      where: { user_id: req.user.id, status: { [Op.notIn]: ["complete", "cancelled"] } },
     });
+
     if (bookingsCount > 0) {
-      return res.status(403).json({ data: "You have an active booking!" });
+      return res.status(403).json({ data: "You already have an active booking!" });
     } else {
       next();
     }

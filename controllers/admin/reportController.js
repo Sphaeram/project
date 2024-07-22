@@ -12,27 +12,37 @@ const bookedCarsAnalytics = async (req, res) => {
 };
 
 const bookingAnalytics = async (req, res) => {
-  let totalBookings = 0,
-    totalRevenue = 0;
-
   const tomorrow = moment().tz(TIME_ZONE).add(1, "day").startOf("day");
-  console.log(tomorrow);
-  console.log(moment().tz(TIME_ZONE).add(2, "day").utc().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"));
+  const monthlyBookings = {
+    Jan: { active: 0, completed: 0, cancelled: 0, total_bookings: 0, total_revenue: 0 },
+    Feb: { active: 0, completed: 0, cancelled: 0, total_bookings: 0, total_revenue: 0 },
+    Mar: { active: 0, completed: 0, cancelled: 0, total_bookings: 0, total_revenue: 0 },
+    Apr: { active: 0, completed: 0, cancelled: 0, total_bookings: 0, total_revenue: 0 },
+    May: { active: 0, completed: 0, cancelled: 0, total_bookings: 0, total_revenue: 0 },
+    Jun: { active: 0, completed: 0, cancelled: 0, total_bookings: 0, total_revenue: 0 },
+    Jul: { active: 0, completed: 0, cancelled: 0, total_bookings: 0, total_revenue: 0 },
+    Aug: { active: 0, completed: 0, cancelled: 0, total_bookings: 0, total_revenue: 0 },
+    Sep: { active: 0, completed: 0, cancelled: 0, total_bookings: 0, total_revenue: 0 },
+    Oct: { active: 0, completed: 0, cancelled: 0, total_bookings: 0, total_revenue: 0 },
+    Nov: { active: 0, completed: 0, cancelled: 0, total_bookings: 0, total_revenue: 0 },
+    Dec: { active: 0, completed: 0, cancelled: 0, total_bookings: 0, total_revenue: 0 },
+  };
+
   try {
     const bookings = await db.booking.findAll({ raw: true });
-
     bookings.forEach((booking) => {
-      if (moment.utc(booking.booking_date).tz(TIME_ZONE).isBefore(tomorrow)) {
-        totalBookings++;
-        totalRevenue += parseFloat(booking.total_price);
+      const temp = moment.utc(booking.booking_date).tz(TIME_ZONE);
+      if (temp.isBefore(tomorrow)) {
+        monthlyBookings[temp.format("MMM")].total_bookings++;
+        if (booking.status === "cancelled") monthlyBookings[temp.format("MMM")].cancelled++;
+        else if (booking.status === "complete") {
+          monthlyBookings[temp.format("MMM")].total_revenue += parseFloat(booking.total_price);
+          monthlyBookings[temp.format("MMM")].completed++;
+        } else monthlyBookings[temp.format("MMM")].active++;
       }
     });
 
-    const analytics = {
-      totalBookings,
-      totalRevenue,
-    };
-    return res.status(200).json({ data: analytics });
+    return res.status(200).json({ data: monthlyBookings });
   } catch (error) {
     return res.status(500).json({ data: error.message });
   }

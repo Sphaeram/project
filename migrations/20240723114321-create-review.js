@@ -9,6 +9,14 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      booking_id: {
+        type: Sequelize.BIGINT,
+        references: {
+          model: "bookings",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+      },
       user_id: {
         type: Sequelize.BIGINT,
         references: {
@@ -16,20 +24,14 @@ module.exports = {
           key: "id",
         },
         onDelete: "SET NULL",
-        onUpdate: "CASCADE",
       },
-      name: {
+      booking_type: {
         allowNull: false,
         type: Sequelize.STRING,
-      },
-      star_rating: {
-        allowNull: false,
-        type: Sequelize.FLOAT,
       },
       review: {
         allowNull: false,
-        defaultValue: "",
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT("long"),
       },
       createdAt: {
         allowNull: false,

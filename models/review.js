@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      review.belongsTo(models.user, { foreignKey: "user_id", onDelete: "SET NULL" });
+      // define association here
     }
   }
   review.init(
@@ -17,7 +17,15 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
+        type: DataTypes.INTEGER,
+      },
+      booking_id: {
         type: DataTypes.BIGINT,
+        references: {
+          model: "bookings",
+          key: "id",
+        },
+        onDelete: "SET NULL",
       },
       user_id: {
         type: DataTypes.BIGINT,
@@ -26,16 +34,14 @@ module.exports = (sequelize, DataTypes) => {
           key: "id",
         },
         onDelete: "SET NULL",
-        onUpdate: "CASCADE",
       },
-      name: {
+      booking_type: {
         allowNull: false,
         type: DataTypes.STRING,
       },
       review: {
         allowNull: false,
-        defaultValue: "",
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT("long"),
       },
       createdAt: {
         allowNull: false,

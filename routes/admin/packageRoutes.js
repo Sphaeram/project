@@ -4,17 +4,14 @@ const { handlingMulterError, upload } = require("../../utils/multerUtil");
 
 const router = require("express").Router();
 
-router.post(
-  "/create",
-  verifyAdmin,
-  (req, res, next) => {
-    req.destination = "package";
-    next();
-  },
-  upload,
-  handlingMulterError,
-  packageController.createPackage
-);
+// (req, res, next) => {
+//   req.destination = "package";
+//   next();
+// },
+// upload,
+// handlingMulterError,
+// packageController.createPackage
+router.post("/create", verifyAdmin, packageController.addPackage);
 
 router.put(
   "/update",

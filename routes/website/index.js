@@ -5,7 +5,6 @@ const packageRouter = require("./packageRoutes");
 const carRouter = require("./carRoutes");
 const ziyaratRouter = require("./ziyaratRoutes");
 const userRouter = require("./userRoutes");
-const reviewRouter = require("./reviewRoutes");
 const couponRouter = require("./couponRoutes");
 const bookingRouter = require("./bookingRoutes");
 
@@ -17,7 +16,8 @@ router.use("/packages", packageRouter);
 router.use("/cars", carRouter);
 router.use("/ziyarats", ziyaratRouter);
 router.use("/users", userRouter);
-router.use("/reviews", reviewRouter);
-router.get("/", (req, res) => res.status(200).send("<center><h1>Welcome!</h1></center>"));
+router.get("/", (req, res) =>
+  res.status(200).send("<center><h1>Welcome!</h1></center>")
+);
 
 module.exports = router;

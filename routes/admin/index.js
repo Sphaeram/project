@@ -7,7 +7,6 @@ const carPackageRouter = require("./carPackageRoutes");
 const ziyaratRouter = require("./ziyaratRoutes");
 const userRouter = require("./userRoutes");
 const couponRouter = require("./couponRoutes");
-const reviewRouter = require("./reviewRoutes");
 const bookingRouter = require("./bookingRoutes");
 const reportRouter = require("./reportRoutes");
 const { verifyAdmin } = require("../../middlewares/verify");
@@ -20,7 +19,6 @@ router.use("/car-packages", carPackageRouter);
 router.use("/ziyarats", ziyaratRouter);
 router.use("/users", userRouter);
 router.use("/coupons", couponRouter);
-router.use("/reviews", reviewRouter);
 router.use("/bookings", verifyAdmin, bookingRouter);
 router.use("/reports", verifyAdmin, reportRouter);
 

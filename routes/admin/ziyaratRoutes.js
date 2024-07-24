@@ -5,6 +5,7 @@ const {
   getZiyaratById,
   getZiyaratsByCarId,
   deleteZiyaratById,
+  deleteAllZiyarats,
 } = require("../../controllers/admin/ziyaratController");
 const { verifyAdmin } = require("../../middlewares/verify");
 const { upload, handlingMulterError } = require("../../utils/multerUtil");
@@ -40,6 +41,8 @@ router
   .get("/ziyarat", getZiyaratById)
   .get("/car-ziyarats", getZiyaratsByCarId);
 
-router.delete("/delete", verifyAdmin, deleteZiyaratById);
+router
+  .delete("/delete", verifyAdmin, deleteZiyaratById)
+  .delete("/delete-all", verifyAdmin, deleteAllZiyarats);
 
 module.exports = router;

@@ -25,13 +25,21 @@ module.exports = {
           { status: req.body.status },
           { where: { id: booking.id }, transaction: t }
         );
-        await db.car.update({ booked: 0 }, { where: { id: booking.car_id }, transaction: t });
+        await db.car.update(
+          { booked: 0 },
+          { where: { id: booking.car_id }, transaction: t }
+        );
         await t.commit();
       } else {
-        await db.booking.update({ status: req.body.status }, { where: { id: bookingId } });
+        await db.booking.update(
+          { status: req.body.status },
+          { where: { id: bookingId } }
+        );
       }
 
-      return res.status(200).json({ data: "Booking Status Updated Successfully!" });
+      return res
+        .status(200)
+        .json({ data: "Booking Status Updated Successfully!" });
     } catch (error) {
       if (req.body.status === "compelete") await t.rollback();
       return res.status(500).json({ data: error.message });
@@ -102,9 +110,22 @@ module.exports = {
     const { bookingId } = req.query;
     if (!bookingId) return res.status(400).json({ data: "Bad Request!" });
     try {
+      const booking = await db.booking.findByPk(bookingId);
+      if (!booking) return res.status(400).json({ data: "Booking Not Found!" });
       await db.booking.destroy({ where: { id: bookingId } });
-
       return res.status(200).json({ data: "Booking Deleted!" });
+    } catch (error) {
+      return res.status(200).json({ data: error.message });
+    }
+  },
+
+  deleteAllBookings: async (req, res) => {
+    try {
+      const bookings = await db.booking.findAll({ raw: true });
+      if (bookings.length === 0)
+        return res.status(404).json({ data: "No Bookings Found!" });
+      await db.booking.destroy({ where: {} });
+      return res.status(200).json({ data: "All Bookings Deleted!" });
     } catch (error) {
       return res.status(200).json({ data: error.message });
     }

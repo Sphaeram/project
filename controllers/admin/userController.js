@@ -28,13 +28,27 @@ module.exports = {
 
   deleteUserById: async (req, res, next) => {
     const { userId } = req.query;
-    if (!userId) return res.status(400).json({ data: "Bad Request!" });
+    if (!userId || isNaN(userId))
+      return res.status(400).json({ data: "Bad Request!" });
     try {
       const user = await db.user.findByPk(userId);
       if (!user) return res.status(404).json({ data: "User Not Found!" });
+      if (req.user.id === parseInt(userId) || req.user.user_type_id === 6156) {
+        await db.user.destroy({ where: { id: user.id } });
+        return res.status(200).json({ data: "User Deleted!" });
+      } else return res.sendStatus(403);
+    } catch (error) {
+      return res.status(500).json({ data: error.message });
+    }
+  },
 
-      await db.user.destroy({ where: { id: user.id } });
-      return res.status(200).json({ data: "User Deleted!" });
+  deleteAllUsers: async (req, res) => {
+    try {
+      const users = await db.user.findAll();
+      if (users.length === 0)
+        return res.status(404).json({ data: "No Users Found!" });
+      await db.user.destroy({ where: {} });
+      return res.status(200).json({ data: "All Users Deleted!" });
     } catch (error) {
       return res.status(500).json({ data: error.message });
     }

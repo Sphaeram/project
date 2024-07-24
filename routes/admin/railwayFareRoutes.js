@@ -4,6 +4,7 @@ const {
   getAllRailwayFares,
   getRailwayFareById,
   deleteRailwayFare,
+  deleteAllRailways,
 } = require("../../controllers/admin/railwayFareController");
 const { verifyAdmin } = require("../../middlewares/verify");
 const { upload, handlingMulterError } = require("../../utils/multerUtil");
@@ -36,6 +37,8 @@ router.put(
 
 router.get("/", getAllRailwayFares).get("/railway-fare", getRailwayFareById);
 
-router.delete("/delete", verifyAdmin, deleteRailwayFare);
+router
+  .delete("/delete", verifyAdmin, deleteRailwayFare)
+  .delete("/delete-all", verifyAdmin, deleteAllRailways);
 
 module.exports = router;

@@ -4,6 +4,7 @@ const {
   deleteAirportFare,
   getAirportFareById,
   getAllAirportFares,
+  deleteAllAirports,
 } = require("../../controllers/admin/airportController");
 const { verifyAdmin } = require("../../middlewares/verify");
 const { upload, handlingMulterError } = require("../../utils/multerUtil");
@@ -36,6 +37,8 @@ router.put(
 
 router.get("/", getAllAirportFares).get("/airport-fare", getAirportFareById);
 
-router.delete("/delete", verifyAdmin, deleteAirportFare);
+router
+  .delete("/delete", verifyAdmin, deleteAirportFare)
+  .delete("/delete-all", verifyAdmin, deleteAllAirports);
 
 module.exports = router;

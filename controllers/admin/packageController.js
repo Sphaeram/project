@@ -264,4 +264,16 @@ module.exports = {
       return res.status(500).json({ data: error.message });
     }
   },
+
+  deleteAllPackages: async (req, res) => {
+    try {
+      const packages = await db.package.findAll({ raw: true });
+      if (packages.length === 0)
+        return res.status(404).json({ data: "No Packages Found!" });
+      await db.package.destroy({ where: {}, truncate: true });
+      return res.status(200).json({ data: "Packages Deleted!" });
+    } catch (error) {
+      return res.status(500).json({ data: error.message });
+    }
+  },
 };

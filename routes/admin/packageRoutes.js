@@ -30,6 +30,8 @@ router
   .get("/package", packageController.getPackageById)
   .get("/car-packages", packageController.getPackagesByCarId);
 
-router.delete("/delete", verifyAdmin, packageController.deletePackageById);
+router
+  .delete("/delete", verifyAdmin, packageController.deletePackageById)
+  .delete("/delete-all", verifyAdmin, packageController.deleteAllPackages);
 
 module.exports = router;

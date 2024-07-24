@@ -5,6 +5,8 @@ const {
   getAllreviews,
   getReviewById,
   getUserReviewById,
+  deleteReviewById,
+  deleteAllReviews,
 } = require("../controllers/common/reviewController");
 const { verifyLogin, verifyAdmin } = require("../middlewares/verify");
 
@@ -19,5 +21,9 @@ router
   .get("/review", verifyAdmin, getReviewById)
   .get("/user-reviews", verifyLogin, getUserReviews)
   .get("/user-review", verifyLogin, getUserReviewById);
+
+router
+  .delete("/delete-review", verifyLogin, deleteReviewById)
+  .delete("/delete-all", verifyAdmin, deleteAllReviews);
 
 module.exports = router;

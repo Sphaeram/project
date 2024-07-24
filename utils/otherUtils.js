@@ -6,7 +6,11 @@ const sanitizeFields = (allowedFields, requestBody) => {
   const sanitizedFields = {};
   if (Object.keys(requestBody).length !== 0) {
     allowedFields.map((field) => {
-      if (requestBody[field] !== null && requestBody[field] !== undefined) {
+      if (
+        requestBody[field] !== null &&
+        requestBody[field] !== undefined &&
+        requestBody[field] !== ""
+      ) {
         sanitizedFields[field] = requestBody[field];
       }
     });
@@ -74,4 +78,10 @@ const convertToJpeg = (inputFilePath, outputFilePath) => {
   });
 };
 
-module.exports = { sanitizeFields, generateOTP, deleteLocalFile, deleteFile, convertToJpeg };
+module.exports = {
+  sanitizeFields,
+  generateOTP,
+  deleteLocalFile,
+  deleteFile,
+  convertToJpeg,
+};

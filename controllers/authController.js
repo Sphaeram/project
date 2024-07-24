@@ -7,7 +7,10 @@ const { ACCESS_TOKEN_SECRET } = require("../utils/constants");
 module.exports = {
   signUp: async (req, res, next) => {
     const { type } = req.query;
-    const sanitizedFields = sanitizeFields(["email", "username", "password", "phone_no"], req.body);
+    const sanitizedFields = sanitizeFields(
+      ["email", "username", "password", "phone_no"],
+      req.body
+    );
 
     if (
       !sanitizedFields.email ||
@@ -19,10 +22,17 @@ module.exports = {
 
     try {
       if (sanitizedFields.username.length < 3)
-        return res.status(403).json({ data: "Name Must be atleast 3 characters long!" });
+        return res
+          .status(403)
+          .json({ data: "Name Must be atleast 3 characters long!" });
       if (sanitizedFields.password.length < 6)
-        return res.status(403).json({ data: "Password must be atleat 6 Characters Long!" });
-      if (sanitizedFields.password === "Password" || sanitizedFields.password === "password")
+        return res
+          .status(403)
+          .json({ data: "Password must be atleat 6 Characters Long!" });
+      if (
+        sanitizedFields.password === "Password" ||
+        sanitizedFields.password === "password"
+      )
         return res.status(403).json({ data: "Password must NOT be password!" });
 
       const user = await db.user.findOne({
@@ -30,10 +40,14 @@ module.exports = {
         raw: true,
       });
 
-      if (user) return res.status(409).json({ data: "Email Already Registered!" });
+      if (user)
+        return res.status(409).json({ data: "Email Already Registered!" });
 
       const salt = bcrypt.genSaltSync(10);
-      sanitizedFields.password = bcrypt.hashSync(sanitizedFields.password, salt);
+      sanitizedFields.password = bcrypt.hashSync(
+        sanitizedFields.password,
+        salt
+      );
       if (type === "agency") sanitizedFields.user_type_id = 7180;
 
       const createdUser = await db.user.create(sanitizedFields);
@@ -47,10 +61,14 @@ module.exports = {
   login: async (req, res, next) => {
     const { email, password } = req.body;
     if (!email) return res.status(400).json({ data: "Email is Required!" });
-    if (!password) return res.status(400).json({ data: "Password is Required!" });
+    if (!password)
+      return res.status(400).json({ data: "Password is Required!" });
 
     if (password.length < 6)
-      return res.json({ status: 403, data: "Password must be atleat 6 Characters Long!" });
+      return res.json({
+        status: 403,
+        data: "Password must be atleat 6 Characters Long!",
+      });
 
     try {
       const user = await db.user.findOne({
@@ -60,7 +78,8 @@ module.exports = {
       if (!user) return res.status(404).json({ data: "Email Not Registered!" });
 
       const isPasswordCorrect = await bcrypt.compare(password, user.password);
-      if (!isPasswordCorrect) return res.status(403).json({ data: "Invalid Credentials!" });
+      if (!isPasswordCorrect)
+        return res.status(403).json({ data: "Invalid Credentials!" });
 
       const accessToken = jwt.sign(
         {
@@ -81,6 +100,37 @@ module.exports = {
       };
 
       return res.status(200).json({ data: userData });
+    } catch (error) {
+      return res.status(500).json({ data: error.message });
+    }
+  },
+
+  changePassword: async (req, res) => {
+    const { id } = req.user;
+    const { oldPassword, newPassword } = req.body;
+    if (!id || !oldPassword || !newPassword || newPassword.length < 6)
+      return res.status(400).json({ data: "Bad Request!" });
+
+    try {
+      const user = await db.user.findByPk(id);
+      if (!user) return res.status(404).json({ data: "User Not Found!" });
+
+      const isOldPasswordCorrect = await bcrypt.compare(
+        oldPassword,
+        user.password
+      );
+      if (!isOldPasswordCorrect)
+        return res.status(403).json({ data: "Invalid Old Password!" });
+
+      const salt = bcrypt.genSaltSync(10);
+      const hashedNewPassword = bcrypt.hashSync(newPassword, salt);
+
+      await db.user.update(
+        { password: hashedNewPassword },
+        { where: { id: id } }
+      );
+
+      return res.status(200).json({ data: "Password Changed Successfully!" });
     } catch (error) {
       return res.status(500).json({ data: error.message });
     }

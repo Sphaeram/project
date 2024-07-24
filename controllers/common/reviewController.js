@@ -91,6 +91,37 @@ const getReviewById = async (req, res, next) => {
   }
 };
 
+const deleteReviewById = async (req, res) => {
+  const { reviewId } = req.query;
+  if (!reviewId || isNaN(reviewId))
+    return res.status(400).json({ data: "Bad Request!" });
+  try {
+    const review = await db.review.findByPk(reviewId);
+    if (!review) return res.status(404).json({ data: "No Review Found!" });
+    if (req.user.user_type_id === 6156)
+      await db.review.destroy({ where: { id: review.id } });
+    else
+      await db.review.destroy({
+        where: { id: review.id, user_id: req.user.id },
+      });
+    return res.status(200).json({ data: "Review deleted successfully!" });
+  } catch (error) {
+    return res.status(500).json({ data: error.message });
+  }
+};
+
+const deleteAllReviews = async (req, res) => {
+  try {
+    const reviews = await db.review.findAll({ raw: true });
+    if (reviews.length === 0)
+      return res.status(404).json({ data: "No Reviews Found!" });
+    await db.review.destroy({ where: {} });
+    return res.status(200).json({ data: "All reviews deleted successfully!" });
+  } catch (error) {
+    return res.status(500).json({ data: error.message });
+  }
+};
+
 module.exports = {
   createReview,
   updateReview,
@@ -98,4 +129,6 @@ module.exports = {
   getAllreviews,
   getUserReviewById,
   getReviewById,
+  deleteReviewById,
+  deleteAllReviews,
 };

@@ -1,4 +1,5 @@
 const db = require("../../models/index");
+const { Op } = require("sequelize");
 
 module.exports = {
   getAllUsers: async (req, res, next) => {
@@ -33,6 +34,7 @@ module.exports = {
     try {
       const user = await db.user.findByPk(userId);
       if (!user) return res.status(404).json({ data: "User Not Found!" });
+      if (user.user_type_id === 6156) return res.sendStatus(403);
       if (req.user.id === parseInt(userId) || req.user.user_type_id === 6156) {
         await db.user.destroy({ where: { id: user.id } });
         return res.status(200).json({ data: "User Deleted!" });
@@ -47,7 +49,7 @@ module.exports = {
       const users = await db.user.findAll();
       if (users.length === 0)
         return res.status(404).json({ data: "No Users Found!" });
-      await db.user.destroy({ where: {} });
+      await db.user.destroy({ where: { user_type_id: { [Op.not]: 6156 } } });
       return res.status(200).json({ data: "All Users Deleted!" });
     } catch (error) {
       return res.status(500).json({ data: error.message });

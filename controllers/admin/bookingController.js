@@ -9,18 +9,18 @@ module.exports = {
     if (
       !bookingId ||
       isNaN(bookingId) ||
-      !["pending approval", "confirmed", "on route", "compelete"].includes(
+      !["pending approval", "confirmed", "on route", "complete"].includes(
         req.body.status?.toLowerCase()
       )
     )
       return res.status(400).json({ data: "Bad Request!" });
-    if (req.body.status === "compelete") t = await db.sequelize.transaction();
+    if (req.body.status === "complete") t = await db.sequelize.transaction();
 
     try {
       const booking = await db.booking.findByPk(bookingId);
       if (!booking) return res.status(404).json({ data: "Booking not found!" });
 
-      if (req.body.status === "compelete") {
+      if (req.body.status === "complete") {
         await db.booking.update(
           { status: req.body.status },
           { where: { id: booking.id }, transaction: t }
@@ -41,7 +41,7 @@ module.exports = {
         .status(200)
         .json({ data: "Booking Status Updated Successfully!" });
     } catch (error) {
-      if (req.body.status === "compelete") await t.rollback();
+      if (req.body.status === "complete") await t.rollback();
       return res.status(500).json({ data: error.message });
     }
   },
@@ -51,7 +51,7 @@ module.exports = {
         include: [
           {
             model: db.user,
-            attributes: ["id", "name", "username"],
+            attributes: ["id", "username"],
             include: { model: db.user_type, attributes: ["title"] },
           },
           {
@@ -84,7 +84,7 @@ module.exports = {
         include: [
           {
             model: db.user,
-            attributes: ["id", "name", "username"],
+            attributes: ["id", "username"],
             include: { model: db.user_type, attributes: ["title"] },
           },
           {

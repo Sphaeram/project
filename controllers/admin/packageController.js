@@ -136,7 +136,11 @@ module.exports = {
     const t = await db.sequelize.transaction();
 
     try {
-      if (req.files["package_image"] && req.files["package_image"].length > 0) {
+      if (
+        req.files &&
+        req.files["package_image"] &&
+        req.files["package_image"].length > 0
+      ) {
         image = true;
         sanitizedFields.image = `${req.files[
           "package_image"
@@ -200,7 +204,11 @@ module.exports = {
       return res.status(200).json({ data: "Package Updated!" });
     } catch (error) {
       await t.rollback();
-      if (req.files["package_image"] && req.files["package_image"].length > 0)
+      if (
+        req.files &&
+        req.files["package_image"] &&
+        req.files["package_image"].length > 0
+      )
         deleteFile(sanitizedFields.image);
       return res.status(500).json({ data: error.message });
     }

@@ -13,10 +13,14 @@ const createZiyarat = async (req, res) => {
   const t = await db.sequelize.transaction();
 
   try {
-    if (req.files["ziyarat_image"] && req.files["ziyarat_image"].length > 0) {
+    if (
+      req.files &&
+      req.files?.ziyarat_image &&
+      req.files?.ziyarat_image.length > 0
+    ) {
       sanitizedFields.image = `${req.files[
         "ziyarat_image"
-      ][0].destination.substring(7)}/${req.files["ziyarat_image"][0].filename}`;
+      ][0].destination.substring(7)}/${req.files?.ziyarat_image[0].filename}`;
       // If the file is in binary (sent from a flutter web application)
       if (!sanitizedFields.image?.split(".")[1]) {
         const format = await convertToJpeg(
@@ -51,8 +55,8 @@ const createZiyarat = async (req, res) => {
     await t.rollback();
     if (
       req.files &&
-      req.files["ziyarat_image"] &&
-      req.files["ziyarat_image"].length > 0
+      req.files?.ziyarat_image &&
+      req.files?.ziyarat_image?.length > 0
     )
       deleteFile(sanitizedFields.image);
 
@@ -67,11 +71,15 @@ const updateZiyarat = async (req, res) => {
   const t = await db.sequelize.transaction();
 
   try {
-    if (req.files["ziyarat_image"] && req.files["ziyarat_image"].length > 0) {
+    if (
+      req.files &&
+      req.files?.ziyarat_image &&
+      req.files?.ziyarat_image?.length > 0
+    ) {
       image = true;
       sanitizedFields.image = `${req.files[
         "ziyarat_image"
-      ][0].destination.substring(7)}/${req.files["ziyarat_image"][0].filename}`;
+      ][0].destination.substring(7)}/${req.files?.ziyarat_image[0].filename}`;
       // If the file is in binary (sent from a flutter web application)
       if (!sanitizedFields.image?.split(".")[1]) {
         const format = await convertToJpeg(
@@ -107,7 +115,11 @@ const updateZiyarat = async (req, res) => {
     return res.status(200).json({ data: "Zirayat Updated!" });
   } catch (error) {
     await t.rollback();
-    if (req.files["ziyarat_image"] && req.files["ziyarat_image"].length > 0)
+    if (
+      req.files &&
+      req.files?.ziyarat_image &&
+      req.files?.ziyarat_image?.length > 0
+    )
       deleteFile(sanitizedFields.image);
 
     return res.status(500).json({ data: error.message });

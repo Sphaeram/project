@@ -1,6 +1,7 @@
 const db = require("../../models");
 const moment = require("moment-timezone");
 const { TIME_ZONE } = require("../../utils/constants");
+const { sanitizeFields } = require("../../utils/otherUtils");
 
 module.exports = {
   updateBookingStatus: async (req, res) => {
@@ -42,6 +43,51 @@ module.exports = {
         .json({ data: "Booking Status Updated Successfully!" });
     } catch (error) {
       if (req.body.status === "complete") await t.rollback();
+      return res.status(500).json({ data: error.message });
+    }
+  },
+
+  updateBooking: async (req, res) => {
+    const { bookingId } = req.query;
+    if (!bookingId || Object.keys(req.body).length === 0)
+      return res.status(400).json({ data: "Bad Request!" });
+    let t = "";
+    const sanitizedBookings = sanitizeFields(
+      ["car_id", "total_price"],
+      req.body
+    );
+    if (sanitizedBookings.car_id) t = await db.sequelize.transaction();
+    try {
+      const booking = await db.booking.findByPk(bookingId);
+      if (!booking) return res.status(404).json({ data: "Booking not found!" });
+
+      if (sanitizedBookings.car_id) {
+        const car = await db.car.findByPk(sanitizedBookings.car_id);
+        if (!car) return res.status(404).json({ data: "Car not found!" });
+        if (car.booked)
+          return res.status(409).json({ data: "Car is already booked!" });
+        await db.booking.update(sanitizedBookings, {
+          where: { id: booking.id },
+          transaction: t,
+        });
+        await db.car.update(
+          { booked: 1 },
+          { where: { id: car.id }, transaction: t }
+        );
+        await db.car.update(
+          { booked: 0 },
+          { where: { id: booking.car_id }, transaction: t }
+        );
+        await t.commit();
+        return res.status(200).json({ data: "Booking Updated Successfully!" });
+      } else {
+        await db.booking.update(sanitizedBookings, {
+          where: { id: booking.id },
+        });
+        return res.status(200).json({ data: "Booking Updated Successfully!" });
+      }
+    } catch (error) {
+      if (sanitizedBookings.car_id) await t.rollback();
       return res.status(500).json({ data: error.message });
     }
   },

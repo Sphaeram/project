@@ -7,33 +7,12 @@ const {
   deleteAllRailways,
 } = require("../../controllers/admin/railwayFareController");
 const { verifyAdmin } = require("../../middlewares/verify");
-const { upload, handlingMulterError } = require("../../utils/multerUtil");
 
 const router = require("express").Router();
 
-router.post(
-  "/create",
-  verifyAdmin,
-  (req, res, next) => {
-    req.destination = "railway_station";
-    next();
-  },
-  upload,
-  handlingMulterError,
-  createRailwayFare
-);
+router.post("/create", verifyAdmin, createRailwayFare);
 
-router.put(
-  "/update",
-  verifyAdmin,
-  (req, res, next) => {
-    req.destination = "railway_station";
-    next();
-  },
-  upload,
-  handlingMulterError,
-  updateRailwayFare
-);
+router.put("/update", verifyAdmin, updateRailwayFare);
 
 router.get("/", getAllRailwayFares).get("/railway-fare", getRailwayFareById);
 

@@ -16,7 +16,9 @@ router.post(
   createBooking
 );
 
-router.put("/update", bookingController.updateBookingStatus);
+router
+  .put("/update", bookingController.updateBookingStatus)
+  .put("/update-details", bookingController.updateBooking);
 
 router
   .get("/", bookingController.getAllBookings)

@@ -11,86 +11,37 @@ const createRailwayFare = async (req, res, next) => {
   const sanitizedFields = sanitizeFields(allowedFields, req.body);
 
   try {
-    if (
-      req.files["railway_station_image"] &&
-      req.files["railway_station_image"].length > 0
-    ) {
-      sanitizedFields.image = `${req.files[
-        "railway_station_image"
-      ][0].destination.substring(7)}/${
-        req.files["railway_station_image"][0].filename
-      }`;
-      // If the file is in binary (sent from a flutter web application)
-      if (!sanitizedFields.image?.split(".")[1]) {
-        const format = await convertToJpeg(
-          `${sanitizedFields.image}`,
-          `${sanitizedFields.image}.jpeg`
-        );
-        sanitizedFields.image = sanitizedFields.image?.concat(".", format);
-      }
-    }
     if (Object.keys(req.body).length === 0) {
-      deleteFile(sanitizedFields.image);
       return res.status(400).json({ data: "Bad Request!" });
     }
 
     const car = await db.car.findByPk(sanitizedFields.car_id);
     if (!car) {
-      deleteFile(sanitizedFields.image);
       return res.status(404).json({ data: "Car Not Found!" });
     }
 
     const railway = await db.railway_fare.create(sanitizedFields);
     return res.status(200).json({ data: railway });
   } catch (error) {
-    if (
-      req.files["railway_station_image"] &&
-      req.files["railway_station_image"]?.length !== 0
-    )
-      deleteFile(sanitizedFields.image);
-
     return res.status(500).json({ data: error.message });
   }
 };
 
 const updateRailwayFare = async (req, res, next) => {
-  let image = false;
   const { railwayFareId } = req.query;
   const sanitizedFields = sanitizeFields(allowedFields, req.body);
 
   try {
     if (
-      req.files["railway_station_image"] &&
-      req.files["railway_station_image"].length > 0
-    ) {
-      image = true;
-      sanitizedFields.image = `${req.files[
-        "railway_station_image"
-      ][0].destination.substring(7)}/${
-        req.files["railway_station_image"][0].filename
-      }`;
-      // If the file is in binary (sent from a flutter web application)
-      if (!sanitizedFields.image?.split(".")[1]) {
-        const format = await convertToJpeg(
-          `${sanitizedFields.image}`,
-          `${sanitizedFields.image}.jpeg`
-        );
-        sanitizedFields.image = sanitizedFields.image?.concat(".", format);
-      }
-    }
-
-    if (
       !railwayFareId ||
       isNaN(railwayFareId) ||
       Object.keys(req.body).length === 0
     ) {
-      deleteFile(sanitizedFields.image);
       return res.status(400).json({ data: "Bad Request!" });
     }
 
     const railway = await db.railway_fare.findByPk(railwayFareId);
     if (!railway) {
-      deleteFile(sanitizedFields.image);
       return res.status(404).json({ data: "No such Railway Station found!" });
     }
 
@@ -98,16 +49,8 @@ const updateRailwayFare = async (req, res, next) => {
       where: { id: railwayFareId },
     });
 
-    if (image) deleteFile(railway.image);
-
     return res.status(200).json({ data: "Railway Station Updated!" });
   } catch (error) {
-    if (
-      req.files["railway_station_image"] &&
-      req.files["railway_station_image"]?.length !== 0
-    )
-      deleteFile(sanitizedFields.image);
-
     return res.status(500).json({ data: error.message });
   }
 };

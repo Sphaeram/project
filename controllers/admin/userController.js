@@ -5,6 +5,7 @@ module.exports = {
   getAllUsers: async (req, res, next) => {
     try {
       const users = await db.user.findAll({
+        where: { user_type_id: { [Op.not]: 6156 } },
         include: { model: db.user_type, attributes: ["title"] },
       });
       return res.status(200).json({ data: users });

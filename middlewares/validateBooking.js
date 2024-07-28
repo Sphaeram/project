@@ -128,6 +128,7 @@ const validateBooking = async (req, res, next) => {
       booking_id: bookingId + req.user.id,
       user_id: req.user.id,
       car_id: sanitizedFields.car_id,
+      driver_name: car.driver_name,
       booking_type: sanitizedFields.booking_type,
       booking_type_id: sanitizedFields.booking_type_id,
       pickup_point: sanitizedFields.pickup_point,

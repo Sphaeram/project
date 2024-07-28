@@ -59,7 +59,7 @@ module.exports = {
       return res.status(400).json({ data: "Bad Request!" });
     let t = "";
     const sanitizedBookings = sanitizeFields(
-      ["car_id", "total_price"],
+      ["car_id", "driver_name", "total_price"],
       req.body
     );
     if (sanitizedBookings.car_id) t = await db.sequelize.transaction();
@@ -121,6 +121,7 @@ module.exports = {
           .utc(booking.booking_date)
           .tz(TIME_ZONE)
           .format("YYYY-MM-DD h:mm A");
+        booking.car.driver_name = booking.driver_name;
       });
 
       return res.status(200).json({ data: bookings });
@@ -152,6 +153,7 @@ module.exports = {
         .utc(booking.booking_date)
         .tz(TIME_ZONE)
         .format("YYYY-MM-DD h:mm A");
+      booking.car.driver_name = booking.driver_name;
 
       return res.status(200).json({ data: booking });
     } catch (error) {

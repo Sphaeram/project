@@ -8,8 +8,14 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      booking.hasMany(models.coupon_collected, { foreignKey: "booking_id", onDelete: "SET NULL" });
-      booking.belongsTo(models.user, { foreignKey: "user_id", onUpdate: "CASCADE" });
+      booking.hasMany(models.coupon_collected, {
+        foreignKey: "booking_id",
+        onDelete: "SET NULL",
+      });
+      booking.belongsTo(models.user, {
+        foreignKey: "user_id",
+        onUpdate: "CASCADE",
+      });
       booking.belongsTo(models.car, {
         foreignKey: "car_id",
         onDelete: "SET NULL",
@@ -46,6 +52,10 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       },
+      driver_name: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
       booking_type: {
         allowNull: false,
         type: DataTypes.STRING,
@@ -79,7 +89,13 @@ module.exports = (sequelize, DataTypes) => {
       status: {
         allowNull: false,
         defaultValue: "pending approval",
-        type: DataTypes.ENUM("pending approval", "confirmed", "on route", "complete", "cancelled"),
+        type: DataTypes.ENUM(
+          "pending approval",
+          "confirmed",
+          "on route",
+          "complete",
+          "cancelled"
+        ),
       },
       booking_date: {
         allowNull: false,

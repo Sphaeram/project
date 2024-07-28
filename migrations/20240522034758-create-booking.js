@@ -31,6 +31,10 @@ module.exports = {
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       },
+      driver_name: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
       booking_type: {
         allowNull: false,
         type: Sequelize.STRING,
@@ -64,7 +68,13 @@ module.exports = {
       status: {
         allowNull: false,
         defaultValue: "pending approval",
-        type: Sequelize.ENUM("pending approval", "confirmed", "on route", "complete", "cancelled"),
+        type: Sequelize.ENUM(
+          "pending approval",
+          "confirmed",
+          "on route",
+          "complete",
+          "cancelled"
+        ),
       },
       booking_date: {
         allowNull: false,

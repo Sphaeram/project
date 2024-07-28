@@ -35,14 +35,23 @@ const verifyAdmin = async (req, res, next) => {
 const verifyValidityForBooking = async (req, res, next) => {
   if (!req.user.id) return res.status(403).json({ data: "SigIn First!" });
   try {
-    const bookingsCount = await db.booking.count({
-      where: { user_id: req.user.id, status: { [Op.notIn]: ["complete", "cancelled"] } },
-    });
-
-    if (bookingsCount > 0) {
-      return res.status(403).json({ data: "You already have an active booking!" });
-    } else {
+    if (req.user.user_type_id === 7180) {
       next();
+    } else {
+      const bookingsCount = await db.booking.count({
+        where: {
+          user_id: req.user.id,
+          status: { [Op.notIn]: ["complete", "cancelled"] },
+        },
+      });
+
+      if (bookingsCount > 0) {
+        return res
+          .status(403)
+          .json({ data: "You already have an active booking!" });
+      } else {
+        next();
+      }
     }
   } catch (error) {
     return res.status(500).json({ data: error.message });

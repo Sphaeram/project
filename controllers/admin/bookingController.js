@@ -10,18 +10,23 @@ module.exports = {
     if (
       !bookingId ||
       isNaN(bookingId) ||
-      !["pending approval", "confirmed", "on route", "complete"].includes(
-        req.body.status?.toLowerCase()
-      )
+      ![
+        "pending approval",
+        "confirmed",
+        "on route",
+        "complete",
+        "cancelled",
+      ].includes(req.body.status?.toLowerCase())
     )
       return res.status(400).json({ data: "Bad Request!" });
-    if (req.body.status === "complete") t = await db.sequelize.transaction();
+    if (req.body.status === "complete" || req.body.status === "cancelled")
+      t = await db.sequelize.transaction();
 
     try {
       const booking = await db.booking.findByPk(bookingId);
       if (!booking) return res.status(404).json({ data: "Booking not found!" });
 
-      if (req.body.status === "complete") {
+      if (req.body.status === "complete" || req.body.status === "cancelled") {
         await db.booking.update(
           { status: req.body.status },
           { where: { id: booking.id }, transaction: t }
@@ -42,7 +47,8 @@ module.exports = {
         .status(200)
         .json({ data: "Booking Status Updated Successfully!" });
     } catch (error) {
-      if (req.body.status === "complete") await t.rollback();
+      if (req.body.status === "complete" || req.body.status === "cancelled")
+        await t.rollback();
       return res.status(500).json({ data: error.message });
     }
   },
@@ -91,6 +97,7 @@ module.exports = {
       return res.status(500).json({ data: error.message });
     }
   },
+
   getAllBookings: async (req, res) => {
     try {
       const bookings = await db.booking.findAll({

@@ -1,7 +1,29 @@
 const db = require("../../models/index");
 const { Op } = require("sequelize");
+const { sanitizeFields } = require("../../utils/otherUtils");
 
 module.exports = {
+  updateUserById: async (req, res) => {
+    const { userId } = req.query;
+    if (!userId || Object.keys(req.body).length === 0)
+      return res.status(400).json({ data: "Bad Request!" });
+    const sanitizedFields = sanitizeFields(
+      ["email", "username", "phone_no"],
+      req.body
+    );
+
+    try {
+      const user = await db.user.findOne({
+        where: { id: userId, user_type_id: { [Op.ne]: 6156 } },
+      });
+      if (!user) return res.status(404).json({ data: "User Not Found!" });
+
+      await db.user.update(sanitizedFields, { where: { id: userId } });
+      return res.status(200).json({ data: "User Updated Successfully!" });
+    } catch (error) {
+      return res.status(500).json({ data: error.message });
+    }
+  },
   getAllUsers: async (req, res, next) => {
     try {
       const users = await db.user.findAll({

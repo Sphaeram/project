@@ -3,6 +3,8 @@ const { verifyAdmin, verifyLogin } = require("../../middlewares/verify");
 
 const router = require("express").Router();
 
+router.put("/update", verifyAdmin, userController.updateUserById);
+
 router
   .get("/", userController.getAllUsers)
   .get("/user", userController.getUserById);

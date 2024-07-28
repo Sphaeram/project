@@ -13,7 +13,7 @@ const bookedCarsAnalytics = async (req, res) => {
 
 const bookingAnalytics = async (req, res) => {
   const tomorrow = moment().tz(TIME_ZONE).add(1, "day").startOf("day");
-  const monthlyBookings = {
+  const initializeMonthlyBookings = () => ({
     Jan: {
       active: 0,
       completed: 0,
@@ -122,33 +122,42 @@ const bookingAnalytics = async (req, res) => {
       total_packages: 0,
       total_ziyarats: 0,
     },
-  };
+  });
 
   try {
     const bookings = await db.booking.findAll({ raw: true });
+    const yearlyBookings = {};
+
     bookings.forEach((booking) => {
       const temp = moment.utc(booking.booking_date).tz(TIME_ZONE);
       if (temp.isBefore(tomorrow)) {
-        monthlyBookings[temp.format("MMM")].total_bookings++;
+        const year = temp.format("YYYY");
+        const month = temp.format("MMM");
+
+        if (!yearlyBookings[year]) {
+          yearlyBookings[year] = initializeMonthlyBookings();
+        }
+
+        yearlyBookings[year][month].total_bookings++;
 
         if (booking.booking_type === "package")
-          monthlyBookings[temp.format("MMM")].total_packages++;
+          yearlyBookings[year][month].total_packages++;
 
         if (booking.booking_type === "ziyarat")
-          monthlyBookings[temp.format("MMM")].total_ziyarats++;
+          yearlyBookings[year][month].total_ziyarats++;
 
         if (booking.status === "cancelled")
-          monthlyBookings[temp.format("MMM")].cancelled++;
+          yearlyBookings[year][month].cancelled++;
         else if (booking.status === "complete") {
-          monthlyBookings[temp.format("MMM")].total_revenue += parseFloat(
+          yearlyBookings[year][month].total_revenue += parseFloat(
             booking.total_price
           );
-          monthlyBookings[temp.format("MMM")].completed++;
-        } else monthlyBookings[temp.format("MMM")].active++;
+          yearlyBookings[year][month].completed++;
+        } else yearlyBookings[year][month].active++;
       }
     });
 
-    return res.status(200).json({ data: monthlyBookings });
+    return res.status(200).json({ data: yearlyBookings });
   } catch (error) {
     return res.status(500).json({ data: error.message });
   }

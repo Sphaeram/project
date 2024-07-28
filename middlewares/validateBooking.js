@@ -10,23 +10,39 @@ const validateBooking = async (req, res, next) => {
     discount = 0;
 
   const sanitizedFields = sanitizeFields(
-    ["car_id", "booking_type", "booking_type_id", "pickup_point", "drop_point", "coupon", "fare"],
+    [
+      "car_id",
+      "booking_type",
+      "booking_type_id",
+      "pickup_point",
+      "drop_point",
+      "coupon",
+      "fare",
+    ],
     req.body
   );
 
-  if (isNaN(sanitizedFields.car_id)) return res.status(400).json({ message: "Bad Request!" });
+  if (isNaN(sanitizedFields.car_id))
+    return res.status(400).json({ message: "Bad Request!" });
 
   try {
     const car = await db.car.findByPk(sanitizedFields.car_id, { raw: true });
     if (!car) return res.status(404).json({ data: "No Car Found!" });
-    if (car.booked) return res.status(403).json({ data: "Car is already booked!" });
+    if (car.booked)
+      return res.status(403).json({ data: "Car is already booked!" });
 
     switch (sanitizedFields.booking_type?.toLowerCase()) {
       case "ziyarat":
-        booking_type = await db.category.findByPk(sanitizedFields.booking_type_id, {
-          include: [{ model: db.sub_category, attributes: ["ziyarat_points"] }],
-        });
-        if (!booking_type) return res.status(404).json({ data: "Ziyarat Not Found!" });
+        booking_type = await db.category.findByPk(
+          sanitizedFields.booking_type_id,
+          {
+            include: [
+              { model: db.sub_category, attributes: ["ziyarat_points"] },
+            ],
+          }
+        );
+        if (!booking_type)
+          return res.status(404).json({ data: "Ziyarat Not Found!" });
         foundCarId = booking_type.car_id;
         price = booking_type.price;
         sanitizedFields.pickup_point = null;
@@ -35,10 +51,14 @@ const validateBooking = async (req, res, next) => {
         break;
 
       case "package":
-        booking_type = await db.package.findByPk(sanitizedFields.booking_type_id, {
-          include: { model: db.car, through: { attributes: ["price"] } },
-        });
-        if (!booking_type) return res.status(404).json({ data: "Package Not Found!" });
+        booking_type = await db.package.findByPk(
+          sanitizedFields.booking_type_id,
+          {
+            include: { model: db.car, through: { attributes: ["price"] } },
+          }
+        );
+        if (!booking_type)
+          return res.status(404).json({ data: "Package Not Found!" });
         booking_type?.cars.forEach((car) => {
           if (car.id === sanitizedFields.car_id) {
             foundCarId = car.id;
@@ -53,9 +73,31 @@ const validateBooking = async (req, res, next) => {
       case "ride":
         if (isNaN(sanitizedFields.fare))
           return res.status(403).json({ data: "The fare is not valid!" });
-        price = sanitizedFields.fare;
-        sanitizedFields.pickup_point = booking_type.pickup_location;
-        sanitizedFields.drop_point = booking_type.drop_location;
+        const ride1 = await db.airport_fare.findAll({
+          where: {
+            car_id: sanitizedFields.car_id,
+            fare: sanitizedFields.fare,
+            pickup_location: sanitizedFields.pickup_point,
+            drop_location: sanitizedFields.drop_point,
+          },
+          raw: true,
+        });
+        const ride2 = await db.railway_fare.findAll({
+          where: {
+            car_id: sanitizedFields.car_id,
+            fare: sanitizedFields.fare,
+            pickup_location: sanitizedFields.pickup_point,
+            drop_location: sanitizedFields.drop_point,
+          },
+          raw: true,
+        });
+        const rides = [...ride1, ...ride2];
+        if (rides.length === 0)
+          return res.status(404).json({ data: "Ride Not Found!" });
+        price = rides[0].fare;
+        sanitizedFields.pickup_point = rides[0].pickup_location;
+        sanitizedFields.drop_point = rides[0].drop_location;
+        foundCarId = rides[0].car_id;
         bookingId = "SFCR-";
         break;
 
@@ -64,14 +106,19 @@ const validateBooking = async (req, res, next) => {
     }
 
     if (parseInt(sanitizedFields.car_id) !== foundCarId)
-      return res
-        .status(403)
-        .json({ data: "The selected car is not assigned to the selected booking type!" });
+      return res.status(403).json({
+        data: "The selected car is not assigned to the selected booking type!",
+      });
 
     if (sanitizedFields.coupon && sanitizedFields.coupon !== "") {
-      const couponResult = await checkCoupon(req.user.id, sanitizedFields.coupon);
+      const couponResult = await checkCoupon(
+        req.user.id,
+        sanitizedFields.coupon
+      );
       if (couponResult.status && couponResult.message)
-        return res.status(couponResult.status).json({ data: couponResult.message });
+        return res
+          .status(couponResult.status)
+          .json({ data: couponResult.message });
       req.coupon = couponResult;
     }
 
@@ -95,7 +142,7 @@ const validateBooking = async (req, res, next) => {
 
     next();
   } catch (error) {
-    return res.status(500).json({ data: "Internal Server Error!" });
+    return res.status(500).json({ data: error.message });
   }
 };
 

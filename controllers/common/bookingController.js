@@ -6,8 +6,22 @@ const createBooking = async (req, res) => {
   const t = await db.sequelize.transaction();
   try {
     const bookingData = req.sanitizedFields;
+    if (bookingData.date && bookingData.time) {
+      bookingData.booking_date = moment
+        .tz(
+          `${bookingData.date} ${bookingData.time}`,
+          "YYYY-MM-DD hh:mm A",
+          TIME_ZONE
+        )
+        .utc()
+        .format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
+    } else {
+      bookingData.booking_date = moment()
+        .tz(TIME_ZONE)
+        .utc()
+        .format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
+    }
 
-    bookingData.booking_date = moment().tz(TIME_ZONE).utc().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
     bookingData.booking_id += `-${moment()
       .tz(TIME_ZONE)
       .format("YYYY-MM-DD HH:mm:ss")
@@ -17,11 +31,18 @@ const createBooking = async (req, res) => {
 
     const booking = await db.booking.create(bookingData, { transaction: t });
 
-    await db.car.update({ booked: 1 }, { where: { id: bookingData.car_id }, transaction: t });
+    await db.car.update(
+      { booked: 1 },
+      { where: { id: bookingData.car_id }, transaction: t }
+    );
 
     if (req.coupon) {
       await db.coupon_collected.create(
-        { coupon_id: req.coupon.id, booking_id: booking.id, user_id: bookingData.user_id },
+        {
+          coupon_id: req.coupon.id,
+          booking_id: booking.id,
+          user_id: bookingData.user_id,
+        },
         { transaction: t }
       );
     }
@@ -50,7 +71,8 @@ const getAllUserBookings = async (req, res) => {
         },
       ],
     });
-    if (bookings.length === 0) return res.status(404).json({ data: "No bookings found!" });
+    if (bookings.length === 0)
+      return res.status(404).json({ data: "No bookings found!" });
 
     return res.status(200).json(bookings);
   } catch (error) {
@@ -60,7 +82,8 @@ const getAllUserBookings = async (req, res) => {
 
 const cancelBooking = async (req, res) => {
   const { bookingId } = req.query;
-  if (!bookingId || isNaN(bookingId)) return res.status(400).json({ data: "Bad Request!" });
+  if (!bookingId || isNaN(bookingId))
+    return res.status(400).json({ data: "Bad Request!" });
 
   const t = await db.sequelize.transaction();
   try {
@@ -68,18 +91,26 @@ const cancelBooking = async (req, res) => {
       where: { id: bookingId, user_id: req.user.id },
       raw: true,
     });
-    if (!booking) return res.status(404).json({ data: "No such booking found!" });
+    if (!booking)
+      return res.status(404).json({ data: "No such booking found!" });
     if (booking.status !== "pending approval")
       return res.status(403).json({ data: "You can't cancel this booking!" });
 
     await db.booking.update(
       { status: "cancelled" },
       {
-        where: { id: booking.id, user_id: booking.user_id, status: "pending approval" },
+        where: {
+          id: booking.id,
+          user_id: booking.user_id,
+          status: "pending approval",
+        },
         transaction: t,
       }
     );
-    await db.car.update({ booked: 0 }, { where: { id: booking.car_id }, transaction: t });
+    await db.car.update(
+      { booked: 0 },
+      { where: { id: booking.car_id }, transaction: t }
+    );
 
     await t.commit();
     return res.status(200).json({ data: "Booking cancelled successfully!" });

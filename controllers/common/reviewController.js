@@ -5,9 +5,10 @@ const createReview = async (req, res) => {
   if (Object.keys(req.body).length === 0)
     return res.status(400).json({ data: "Bad Request!" });
   const sanitizedFields = sanitizeFields(
-    ["booking_id", "user_id", "booking_type", "review"],
+    ["booking_id", "booking_type", "review"],
     req.body
   );
+  sanitizedFields.user_id = req.user.id;
   try {
     const review = await db.review.create(sanitizedFields);
     return res.status(201).json({ data: review });
@@ -22,7 +23,7 @@ const updateReview = async (req, res) => {
     return res.status(400).json({ data: "Bad Request!" });
 
   const sanitizedFields = sanitizeFields(
-    ["booking_id", "user_id", "booking_type", "review"],
+    ["booking_id", "booking_type", "review"],
     req.body
   );
   try {
@@ -41,6 +42,12 @@ const getUserReviews = async (req, res) => {
   try {
     const reviews = await db.review.findAll({
       where: { user_id: req.user.id },
+      include: [
+        {
+          model: db.user,
+          attributes: ["id", "username", "email", "phone_no"],
+        },
+      ],
       raw: true,
     });
     if (reviews.length === 0)
@@ -54,7 +61,14 @@ const getUserReviews = async (req, res) => {
 
 const getAllreviews = async (req, res, next) => {
   try {
-    const reviews = await db.review.findAll();
+    const reviews = await db.review.findAll({
+      include: [
+        {
+          model: db.user,
+          attributes: ["id", "username", "email", "phone_no"],
+        },
+      ],
+    });
     if (!reviews || reviews.length === 0)
       return res.status(404).json({ data: "No Reviews Found!" });
     return res.status(200).json({ data: reviews });
@@ -70,6 +84,12 @@ const getUserReviewById = async (req, res, next) => {
   try {
     const review = await db.review.findOne({
       where: { id: reviewId, user_id: userId },
+      include: [
+        {
+          model: db.user,
+          attributes: ["id", "username", "email", "phone_no"],
+        },
+      ],
     });
     if (!review) return res.status(404).json({ data: "No Review Found!" });
     return res.status(200).json({ data: review });
@@ -83,7 +103,14 @@ const getReviewById = async (req, res, next) => {
   if (!reviewId || isNaN(reviewId))
     return res.status(400).json({ data: "Bad Request!" });
   try {
-    const review = await db.review.findByPk(reviewId);
+    const review = await db.review.findByPk(reviewId, {
+      include: [
+        {
+          model: db.user,
+          attributes: ["id", "username", "email", "phone_no"],
+        },
+      ],
+    });
     if (!review) return res.status(404).json({ data: "No Review Found!" });
     return res.status(200).json({ data: review });
   } catch (error) {

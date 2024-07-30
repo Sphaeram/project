@@ -11,11 +11,16 @@ module.exports = (sequelize, DataTypes) => {
       user.hasMany(models.review, {
         foreignKey: "user_id",
         onDelete: "SET NULL",
-        onUpdate: "CASCADE",
       });
 
-      user.hasMany(models.booking, { foreignKey: "user_id", onUpdate: "CASCADE" });
-      user.hasMany(models.coupon_collected, { foreignKey: "user_id", onUpdate: "CASCADE" });
+      user.hasMany(models.booking, {
+        foreignKey: "user_id",
+        onUpdate: "CASCADE",
+      });
+      user.hasMany(models.coupon_collected, {
+        foreignKey: "user_id",
+        onUpdate: "CASCADE",
+      });
 
       /***************************************************************/
 

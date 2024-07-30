@@ -17,8 +17,8 @@ router.post("/create", verifyLogin, createReview);
 router.put("/update", verifyLogin, updateReview);
 
 router
-  .get("/", verifyAdmin, getAllreviews)
-  .get("/review", verifyAdmin, getReviewById)
+  .get("/", getAllreviews)
+  .get("/review", getReviewById)
   .get("/user-reviews", verifyLogin, getUserReviews)
   .get("/user-review", verifyLogin, getUserReviewById);
 

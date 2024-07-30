@@ -18,6 +18,8 @@ const validateBooking = async (req, res, next) => {
       "drop_point",
       "coupon",
       "fare",
+      "date",
+      "time",
     ],
     req.body
   );
@@ -134,6 +136,8 @@ const validateBooking = async (req, res, next) => {
       pickup_point: sanitizedFields.pickup_point,
       drop_point: sanitizedFields.drop_point,
       coupon: req.coupon?.id ? sanitizedFields.coupon : "",
+      date: sanitizedFields.date,
+      time: sanitizedFields.time,
       sub_total: parseFloat(price),
       discount: discount,
       total_price: parseFloat(price) - parseFloat(discount),

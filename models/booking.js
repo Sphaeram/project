@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "booking_id",
         onDelete: "SET NULL",
       });
+      booking.hasMany(models.review, {
+        foreignKey: "booking_id",
+        onDelete: "SET NULL",
+      });
       booking.belongsTo(models.user, {
         foreignKey: "user_id",
         onUpdate: "CASCADE",

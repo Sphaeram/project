@@ -73,7 +73,7 @@ module.exports = {
 
     try {
       const user = await db.user.findOne({
-        where: { email: email },
+        where: { email: email?.toLowerCase() },
         raw: true,
       });
       if (!user) return res.status(404).json({ data: "Email Not Registered!" });

@@ -35,8 +35,9 @@ module.exports = {
       )
         return res.status(403).json({ data: "Password must NOT be password!" });
 
+      sanitizedFields.email = sanitizedFields.email.toLowerCase();
       const user = await db.user.findOne({
-        where: { email: sanitizedFields.email.toLowerCase() },
+        where: { email: sanitizedFields.email },
         raw: true,
       });
 

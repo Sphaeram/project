@@ -164,10 +164,29 @@ module.exports = {
   deleteBookingById: async (req, res) => {
     const { bookingId } = req.query;
     if (!bookingId) return res.status(400).json({ data: "Bad Request!" });
+
     try {
       const booking = await db.booking.findByPk(bookingId);
       if (!booking) return res.status(400).json({ data: "Booking Not Found!" });
-      await db.booking.destroy({ where: { id: bookingId } });
+      if (booking.status !== "complete") {
+        try {
+          const t = await db.sequelize.transaction();
+          await db.booking.destroy({
+            where: { id: bookingId },
+            transaction: t,
+          });
+          await db.car.update(
+            { booked: 0 },
+            { where: { id: booking.car_id }, transaction: t }
+          );
+          await t.commit();
+        } catch (error) {
+          await t.rollback();
+          return res.status(404).json({ data: error.message });
+        }
+      } else {
+        await db.booking.destroy({ where: { id: bookingId } });
+      }
       return res.status(200).json({ data: "Booking Deleted!" });
     } catch (error) {
       return res.status(200).json({ data: error.message });
@@ -180,6 +199,7 @@ module.exports = {
       if (bookings.length === 0)
         return res.status(404).json({ data: "No Bookings Found!" });
       await db.booking.destroy({ where: {} });
+      await db.car.update({ booked: 0 }, { where: {} });
       return res.status(200).json({ data: "All Bookings Deleted!" });
     } catch (error) {
       return res.status(200).json({ data: error.message });

@@ -156,8 +156,125 @@ const bookingAnalytics = async (req, res) => {
         } else yearlyBookings[year][month].active++;
       }
     });
+    let data = "";
+    if (Object.keys(yearlyBookings).length === 0) {
+      data = {
+        2024: {
+          Jan: {
+            active: 0,
+            completed: 0,
+            cancelled: 0,
+            total_bookings: 0,
+            total_revenue: 0,
+            total_packages: 0,
+            total_ziyarats: 0,
+          },
+          Feb: {
+            active: 0,
+            completed: 0,
+            cancelled: 0,
+            total_bookings: 0,
+            total_revenue: 0,
+            total_packages: 0,
+            total_ziyarats: 0,
+          },
+          Mar: {
+            active: 0,
+            completed: 0,
+            cancelled: 0,
+            total_bookings: 0,
+            total_revenue: 0,
+            total_packages: 0,
+            total_ziyarats: 0,
+          },
+          Apr: {
+            active: 0,
+            completed: 0,
+            cancelled: 0,
+            total_bookings: 0,
+            total_revenue: 0,
+            total_packages: 0,
+            total_ziyarats: 0,
+          },
+          May: {
+            active: 0,
+            completed: 0,
+            cancelled: 0,
+            total_bookings: 0,
+            total_revenue: 0,
+            total_packages: 0,
+            total_ziyarats: 0,
+          },
+          Jun: {
+            active: 0,
+            completed: 0,
+            cancelled: 0,
+            total_bookings: 0,
+            total_revenue: 0,
+            total_packages: 0,
+            total_ziyarats: 0,
+          },
+          Jul: {
+            active: 0,
+            completed: 0,
+            cancelled: 0,
+            total_bookings: 0,
+            total_revenue: 0,
+            total_packages: 0,
+            total_ziyarats: 0,
+          },
+          Aug: {
+            active: 0,
+            completed: 0,
+            cancelled: 0,
+            total_bookings: 0,
+            total_revenue: 0,
+            total_packages: 0,
+            total_ziyarats: 0,
+          },
+          Sep: {
+            active: 0,
+            completed: 0,
+            cancelled: 0,
+            total_bookings: 0,
+            total_revenue: 0,
+            total_packages: 0,
+            total_ziyarats: 0,
+          },
+          Oct: {
+            active: 0,
+            completed: 0,
+            cancelled: 0,
+            total_bookings: 0,
+            total_revenue: 0,
+            total_packages: 0,
+            total_ziyarats: 0,
+          },
+          Nov: {
+            active: 0,
+            completed: 0,
+            cancelled: 0,
+            total_bookings: 0,
+            total_revenue: 0,
+            total_packages: 0,
+            total_ziyarats: 0,
+          },
+          Dec: {
+            active: 0,
+            completed: 0,
+            cancelled: 0,
+            total_bookings: 0,
+            total_revenue: 0,
+            total_packages: 0,
+            total_ziyarats: 0,
+          },
+        },
+      };
+    } else {
+      data = yearlyBookings;
+    }
 
-    return res.status(200).json({ data: yearlyBookings });
+    return res.status(200).json({ data: data });
   } catch (error) {
     return res.status(500).json({ data: error.message });
   }

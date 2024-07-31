@@ -59,27 +59,56 @@ module.exports = {
       return res.status(400).json({ data: "Bad Request!" });
     let t = "";
     const sanitizedBookings = sanitizeFields(
-      ["car_id", "driver_name", "total_price"],
+      ["car_id", "driver_name", "total_price", "status"],
       req.body
     );
-    if (sanitizedBookings.car_id) t = await db.sequelize.transaction();
+
+    if (
+      sanitizedBookings.status &&
+      ![
+        "pending approval",
+        "confirmed",
+        "on route",
+        "complete",
+        "cancelled",
+      ].includes(sanitizedBookings.status?.toLowerCase())
+    )
+      return res.status(400).json({ data: "Bad Request!" });
+
+    if (
+      sanitizedBookings.car_id ||
+      sanitizedBookings.status === "complete" ||
+      sanitizedBookings.status === "cancelled"
+    )
+      t = await db.sequelize.transaction();
+
     try {
       const booking = await db.booking.findByPk(bookingId);
       if (!booking) return res.status(404).json({ data: "Booking not found!" });
 
-      if (sanitizedBookings.car_id) {
-        const car = await db.car.findByPk(sanitizedBookings.car_id);
-        if (!car) return res.status(404).json({ data: "Car not found!" });
-        if (car.booked)
-          return res.status(409).json({ data: "Car is already booked!" });
+      if (
+        sanitizedBookings.car_id ||
+        sanitizedBookings.status === "complete" ||
+        sanitizedBookings.status === "cancelled"
+      ) {
+        let car = "";
+        if (sanitizedBookings.car_id) {
+          car = await db.car.findByPk(sanitizedBookings.car_id);
+          if (!car) return res.status(404).json({ data: "Car not found!" });
+          if (car.booked)
+            return res.status(409).json({ data: "Car is already booked!" });
+        }
         await db.booking.update(sanitizedBookings, {
           where: { id: booking.id },
           transaction: t,
         });
-        await db.car.update(
-          { booked: 1 },
-          { where: { id: car.id }, transaction: t }
-        );
+        if (car && sanitizedBookings.status !== "cancelled") {
+          await db.car.update(
+            { booked: 1 },
+            { where: { id: car.id }, transaction: t }
+          );
+        }
+
         await db.car.update(
           { booked: 0 },
           { where: { id: booking.car_id }, transaction: t }
@@ -93,7 +122,12 @@ module.exports = {
         return res.status(200).json({ data: "Booking Updated Successfully!" });
       }
     } catch (error) {
-      if (sanitizedBookings.car_id) await t.rollback();
+      if (
+        sanitizedBookings.car_id ||
+        sanitizedBookings.status === "complete" ||
+        sanitizedBookings.status === "cancelled"
+      )
+        await t.rollback();
       return res.status(500).json({ data: error.message });
     }
   },

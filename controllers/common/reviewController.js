@@ -11,7 +11,7 @@ const createReview = async (req, res) => {
   sanitizedFields.user_id = req.user.id;
   try {
     const review = await db.review.create(sanitizedFields);
-    return res.status(201).json({ data: review });
+    return res.status(200).json({ data: review });
   } catch (error) {
     return res.status(500).json({ data: error.message });
   }
@@ -32,7 +32,7 @@ const updateReview = async (req, res) => {
 
     await db.review.update(sanitizedFields, { where: { id: review.id } });
 
-    return res.status(201).json({ data: "Review Updated!" });
+    return res.status(200).json({ data: "Review Updated!" });
   } catch (error) {
     return res.status(500).json({ data: error.message });
   }

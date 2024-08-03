@@ -134,7 +134,8 @@ module.exports = {
 
   getAllBookings: async (req, res) => {
     try {
-      const bookings = await db.booking.findAll({
+      const pendingBookings = await db.booking.findAll({
+        where: { status: "pending approval" },
         include: [
           {
             model: db.user,
@@ -147,6 +148,71 @@ module.exports = {
           },
         ],
       });
+      const confirmedBookings = await db.booking.findAll({
+        where: { status: "confirmed" },
+        include: [
+          {
+            model: db.user,
+            attributes: ["id", "username"],
+            include: { model: db.user_type, attributes: ["title"] },
+          },
+          {
+            model: db.car,
+            attributes: ["id", "type", "driver_name", "number_plate"],
+          },
+        ],
+      });
+      const onRouteBookings = await db.booking.findAll({
+        where: { status: "on route" },
+        include: [
+          {
+            model: db.user,
+            attributes: ["id", "username"],
+            include: { model: db.user_type, attributes: ["title"] },
+          },
+          {
+            model: db.car,
+            attributes: ["id", "type", "driver_name", "number_plate"],
+          },
+        ],
+      });
+      const completedBookings = await db.booking.findAll({
+        where: { status: "complete" },
+        include: [
+          {
+            model: db.user,
+            attributes: ["id", "username"],
+            include: { model: db.user_type, attributes: ["title"] },
+          },
+          {
+            model: db.car,
+            attributes: ["id", "type", "driver_name", "number_plate"],
+          },
+        ],
+      });
+      const cancelledBookings = await db.booking.findAll({
+        where: { status: "cancelled" },
+        include: [
+          {
+            model: db.user,
+            attributes: ["id", "username"],
+            include: { model: db.user_type, attributes: ["title"] },
+          },
+          {
+            model: db.car,
+            attributes: ["id", "type", "driver_name", "number_plate"],
+          },
+        ],
+      });
+
+      const bookings = [
+        ...pendingBookings?.reverse(),
+        ...confirmedBookings?.reverse(),
+        ...onRouteBookings?.reverse(),
+        ...completedBookings?.reverse(),
+        ...cancelledBookings?.reverse(),
+      ];
+
       if (!bookings || bookings.length === 0)
         return res.status(404).json({ data: "No Bookings Found!" });
 

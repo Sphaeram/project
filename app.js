@@ -20,7 +20,9 @@ app.use(cors(customCorsOptions));
 
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/testing", (req, res) => res.status(200).send("<center><h1>Testing...</h1></center>"));
+app.use("/testing", (req, res) =>
+  res.status(200).send("<center><h1>Testing...</h1></center>")
+);
 
 app.use(
   express.json({

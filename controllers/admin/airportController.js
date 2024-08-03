@@ -72,7 +72,7 @@ const getAllAirportFares = async (req, res, next) => {
     if (!airports || airports.length === 0)
       return res.status(404).json({ data: "No airports found!" });
 
-    return res.status(200).json({ data: airports });
+    return res.status(200).json({ data: airports?.reverse() });
   } catch (error) {
     return res.status(500).json({ data: error.message });
   }

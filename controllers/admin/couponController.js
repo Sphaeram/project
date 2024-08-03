@@ -69,7 +69,7 @@ module.exports = {
           .format("YYYY-MM-DD");
       });
 
-      return res.status(200).json({ data: coupons });
+      return res.status(200).json({ data: coupons?.reverse() });
     } catch (error) {
       return res.status(500).json({ data: error.message });
     }

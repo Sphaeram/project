@@ -76,7 +76,7 @@ const getAllRailwayFares = async (req, res, next) => {
     if (!railways || railways.length === 0)
       return res.status(404).json({ data: "No railway stations found!" });
 
-    return res.status(200).json({ data: railways });
+    return res.status(200).json({ data: railways?.reverse() });
   } catch (error) {
     return res.status(500).json({ data: error.message });
   }

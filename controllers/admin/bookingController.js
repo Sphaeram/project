@@ -205,7 +205,8 @@ module.exports = {
         ],
       });
 
-      const bookings = [
+      const bookings = [];
+      const rawBookings = [
         ...pendingBookings?.reverse(),
         ...confirmedBookings?.reverse(),
         ...onRouteBookings?.reverse(),
@@ -213,15 +214,21 @@ module.exports = {
         ...cancelledBookings?.reverse(),
       ];
 
-      if (!bookings || bookings.length === 0)
+      if (!rawBookings || rawBookings.length === 0)
         return res.status(404).json({ data: "No Bookings Found!" });
 
-      bookings.forEach((booking) => {
-        booking.booking_date = moment
-          .utc(booking.booking_date)
-          .tz(TIME_ZONE)
-          .format("YYYY-MM-DD h:mm A");
-        booking.car.driver_name = booking.driver_name;
+      rawBookings.forEach((booking) => {
+        if (
+          moment.utc(booking.booking_date).tz(TIME_ZONE).month() >
+          moment().tz(TIME_ZONE).month() - 3
+        ) {
+          booking.booking_date = moment
+            .utc(booking.booking_date)
+            .tz(TIME_ZONE)
+            .format("YYYY-MM-DD h:mm A");
+          booking.car.driver_name = booking.driver_name;
+          bookings.push(booking);
+        }
       });
 
       return res.status(200).json({ data: bookings });

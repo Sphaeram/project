@@ -219,7 +219,7 @@ module.exports = {
       const packages = await db.package.findAll({
         include: { model: db.car, through: { attributes: ["price"] } },
       });
-      return res.status(200).json({ data: packages });
+      return res.status(200).json({ data: packages?.reverse() });
     } catch (error) {
       return res.status(500).json({ data: error.message });
     }
@@ -251,7 +251,7 @@ module.exports = {
       });
       if (!packages || packages.length === 0)
         return res.status(404).json({ data: "No Packages Found!" });
-      return res.status(200).json({ data: packages });
+      return res.status(200).json({ data: packages?.reverse() });
     } catch (error) {
       return res.status(500).json({ data: error.message });
     }

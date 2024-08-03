@@ -147,7 +147,7 @@ const getZiyarats = async (req, res) => {
     const ziyarats = await db.category.findAll({
       include: [{ model: db.sub_category, attributes: ["ziyarat_points"] }],
     });
-    return res.status(200).json({ data: ziyarats });
+    return res.status(200).json({ data: ziyarats?.reverse() });
   } catch (error) {
     return res.status(500).json({ data: error.message });
   }

@@ -53,7 +53,7 @@ const getUserReviews = async (req, res) => {
     if (reviews.length === 0)
       return res.status(404).json({ data: "Reviews Not Found!" });
 
-    return res.status(200).json({ data: reviews });
+    return res.status(200).json({ data: reviews?.reverse() });
   } catch (error) {
     return res.status(500).json({ data: error.message });
   }
@@ -71,7 +71,7 @@ const getAllreviews = async (req, res, next) => {
     });
     if (!reviews || reviews.length === 0)
       return res.status(404).json({ data: "No Reviews Found!" });
-    return res.status(200).json({ data: reviews });
+    return res.status(200).json({ data: reviews?.reverse() });
   } catch (error) {
     return res.status(500).json({ data: error.message });
   }

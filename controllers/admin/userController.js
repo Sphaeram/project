@@ -30,7 +30,7 @@ module.exports = {
         where: { user_type_id: { [Op.not]: 6156 } },
         include: { model: db.user_type, attributes: ["title"] },
       });
-      return res.status(200).json({ data: users });
+      return res.status(200).json({ data: users?.reverse() });
     } catch (error) {
       return res.status(500).json({ data: error.message });
     }

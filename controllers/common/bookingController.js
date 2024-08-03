@@ -57,9 +57,9 @@ const createBooking = async (req, res) => {
 
 const getAllUserBookings = async (req, res) => {
   try {
-    const bookings = await db.booking.findAll({
+    const pendingBookings = await db.booking.findAll({
       attributes: { exclude: ["deletedAt", "createdAt", "updatedAt"] },
-      where: { user_id: req.user.id },
+      where: { user_id: req.user.id, status: "pending approval" },
       include: [
         {
           model: db.user,
@@ -71,8 +71,73 @@ const getAllUserBookings = async (req, res) => {
         },
       ],
     });
-    if (bookings.length === 0)
-      return res.status(404).json({ data: "No bookings found!" });
+    const confirmedBookings = await db.booking.findAll({
+      attributes: { exclude: ["deletedAt", "createdAt", "updatedAt"] },
+      where: { user_id: req.user.id, status: "confirmed" },
+      include: [
+        {
+          model: db.user,
+          attributes: ["id", "username", "email", "phone_no"],
+        },
+        {
+          model: db.car,
+          attributes: { exclude: ["deletedAt", "createdAt", "updatedAt"] },
+        },
+      ],
+    });
+    const onRouteBookings = await db.booking.findAll({
+      attributes: { exclude: ["deletedAt", "createdAt", "updatedAt"] },
+      where: { user_id: req.user.id, status: "on route" },
+      include: [
+        {
+          model: db.user,
+          attributes: ["id", "username", "email", "phone_no"],
+        },
+        {
+          model: db.car,
+          attributes: { exclude: ["deletedAt", "createdAt", "updatedAt"] },
+        },
+      ],
+    });
+    const completedBookings = await db.booking.findAll({
+      attributes: { exclude: ["deletedAt", "createdAt", "updatedAt"] },
+      where: { user_id: req.user.id, status: "complete" },
+      include: [
+        {
+          model: db.user,
+          attributes: ["id", "username", "email", "phone_no"],
+        },
+        {
+          model: db.car,
+          attributes: { exclude: ["deletedAt", "createdAt", "updatedAt"] },
+        },
+      ],
+    });
+    const cancelledBookings = await db.booking.findAll({
+      attributes: { exclude: ["deletedAt", "createdAt", "updatedAt"] },
+      where: { user_id: req.user.id, status: "cancelled" },
+      include: [
+        {
+          model: db.user,
+          attributes: ["id", "username", "email", "phone_no"],
+        },
+        {
+          model: db.car,
+          attributes: { exclude: ["deletedAt", "createdAt", "updatedAt"] },
+        },
+      ],
+    });
+
+    const bookings = [
+      ...pendingBookings?.reverse(),
+      ...confirmedBookings?.reverse(),
+      ...onRouteBookings?.reverse(),
+      ...completedBookings?.reverse(),
+      ...cancelledBookings?.reverse(),
+    ];
+
+    if (!bookings || bookings.length === 0)
+      return res.status(404).json({ data: "No Bookings Found!" });
 
     return res.status(200).json(bookings);
   } catch (error) {

@@ -95,22 +95,34 @@ module.exports = {
         if (sanitizedBookings.car_id) {
           car = await db.car.findByPk(sanitizedBookings.car_id);
           if (!car) return res.status(404).json({ data: "Car not found!" });
-          if (car.booked)
+          if (car.qty === 0 && car.booked)
             return res.status(409).json({ data: "Car is already booked!" });
         }
         await db.booking.update(sanitizedBookings, {
           where: { id: booking.id },
           transaction: t,
         });
-        if (car && sanitizedBookings.status !== "cancelled") {
-          await db.car.update(
-            { booked: 1 },
-            { where: { id: car.id }, transaction: t }
-          );
+        if (
+          car &&
+          car.id !== booking.car_id &&
+          sanitizedBookings.status !== "cancelled" &&
+          sanitizedBookings.status !== "complete"
+        ) {
+          if (car.qty === 1) {
+            await db.car.update(
+              { booked: 1, qty: 0 },
+              { where: { id: car.id }, transaction: t }
+            );
+          } else {
+            await db.car.update(
+              { qty: car.qty - 1 },
+              { where: { id: car.id }, transaction: t }
+            );
+          }
         }
 
         await db.car.update(
-          { booked: 0 },
+          { booked: 0, qty: car.qty + 1 },
           { where: { id: booking.car_id }, transaction: t }
         );
         await t.commit();

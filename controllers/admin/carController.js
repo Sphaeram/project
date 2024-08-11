@@ -14,6 +14,7 @@ const allowedFields = [
   "seating_capacity",
   "luggage_capacity",
   "image",
+  "qty",
 ];
 
 module.exports = {

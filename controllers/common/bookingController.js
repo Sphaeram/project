@@ -31,10 +31,17 @@ const createBooking = async (req, res) => {
 
     const booking = await db.booking.create(bookingData, { transaction: t });
 
-    await db.car.update(
-      { booked: 1 },
-      { where: { id: bookingData.car_id }, transaction: t }
-    );
+    if (req.qty === 1) {
+      await db.car.update(
+        { booked: 1, qty: 0 },
+        { where: { id: bookingData.car_id }, transaction: t }
+      );
+    } else {
+      await db.car.update(
+        { qty: req.qty - 1 },
+        { where: { id: bookingData.car_id }, transaction: t }
+      );
+    }
 
     if (req.coupon) {
       await db.coupon_collected.create(

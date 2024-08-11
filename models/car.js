@@ -8,10 +8,22 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      car.hasMany(models.booking, { foreignKey: "car_id", onDelete: "SET NULL" });
-      car.hasMany(models.airport_fare, { foreignKey: "car_id", onDelete: "SET NULL" });
-      car.hasMany(models.railway_fare, { foreignKey: "car_id", onDelete: "SET NULL" });
-      car.hasMany(models.category, { foreignKey: "car_id", onDelete: "SET NULL" });
+      car.hasMany(models.booking, {
+        foreignKey: "car_id",
+        onDelete: "SET NULL",
+      });
+      car.hasMany(models.airport_fare, {
+        foreignKey: "car_id",
+        onDelete: "SET NULL",
+      });
+      car.hasMany(models.railway_fare, {
+        foreignKey: "car_id",
+        onDelete: "SET NULL",
+      });
+      car.hasMany(models.category, {
+        foreignKey: "car_id",
+        onDelete: "SET NULL",
+      });
 
       car.belongsToMany(models.package, {
         through: models.car_package,
@@ -56,6 +68,11 @@ module.exports = (sequelize, DataTypes) => {
       image: {
         allowNull: false,
         type: DataTypes.STRING,
+      },
+      qty: {
+        type: DataTypes.INTEGER,
+        defaultValue: 1,
+        allowNull: false,
       },
       booked: {
         allowNull: false,

@@ -30,7 +30,8 @@ const validateBooking = async (req, res, next) => {
   try {
     const car = await db.car.findByPk(sanitizedFields.car_id, { raw: true });
     if (!car) return res.status(404).json({ data: "No Car Found!" });
-    if (car.booked)
+
+    if (car.qty === 0 && car.booked)
       return res.status(403).json({ data: "Car is already booked!" });
 
     switch (sanitizedFields.booking_type?.toLowerCase()) {
@@ -144,6 +145,7 @@ const validateBooking = async (req, res, next) => {
     };
 
     req.sanitizedFields = bookingData;
+    req.qty = car.qty;
 
     next();
   } catch (error) {

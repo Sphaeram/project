@@ -92,7 +92,24 @@ module.exports = {
         return res.status(404).json({ data: "Car Not Found!" });
       }
 
-      await db.car.update(sanitizedFields, { where: { id: car.id } });
+      if (
+        sanitizedFields.saved_qty &&
+        sanitizedFields.saved_qty < car.saved_qty
+      )
+        return res
+          .status(403)
+          .json({ data: `${car.saved_qty - car.qty} cars are booked!` });
+
+      if (
+        sanitizedFields.saved_qty &&
+        sanitizedFields.saved_qty > car.saved_qty
+      ) {
+        sanitizedFields.qty = car.qty + (sanitizedFields.saved_qty - car.qty);
+      }
+
+      sanitizedFields.qty = await db.car.update(sanitizedFields, {
+        where: { id: car.id },
+      });
 
       if (image) deleteFile(car.image);
 

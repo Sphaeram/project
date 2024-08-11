@@ -103,6 +103,14 @@ module.exports = {
 
       if (
         sanitizedFields.saved_qty &&
+        sanitizedFields.saved_qty < car.saved_qty &&
+        car.qty === car.saved_qty
+      ) {
+        sanitizedFields.qty = sanitizedFields.saved_qty;
+      }
+
+      if (
+        sanitizedFields.saved_qty &&
         sanitizedFields.saved_qty > car.saved_qty
       ) {
         sanitizedFields.qty = car.qty + (sanitizedFields.saved_qty - car.qty);

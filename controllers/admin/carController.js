@@ -94,7 +94,8 @@ module.exports = {
       sanitizedFields.saved_qty = parseInt(sanitizedFields.saved_qty);
       if (
         sanitizedFields.saved_qty &&
-        sanitizedFields.saved_qty < car.saved_qty
+        sanitizedFields.saved_qty < car.saved_qty &&
+        car.qty !== car.saved_qty
       )
         return res
           .status(403)

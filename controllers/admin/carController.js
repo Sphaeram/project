@@ -91,7 +91,7 @@ module.exports = {
         deleteFile(sanitizedFields.image);
         return res.status(404).json({ data: "Car Not Found!" });
       }
-
+      sanitizedFields.saved_qty = parseInt(sanitizedFields.saved_qty);
       if (
         sanitizedFields.saved_qty &&
         sanitizedFields.saved_qty < car.saved_qty

@@ -74,6 +74,11 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: 1,
         allowNull: false,
       },
+      saved_qty: {
+        type: DataTypes.INTEGER,
+        defaultValue: 1,
+        allowNull: false,
+      },
       booked: {
         allowNull: false,
         defaultValue: 0,

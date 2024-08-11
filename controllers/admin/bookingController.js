@@ -287,15 +287,16 @@ module.exports = {
     try {
       const booking = await db.booking.findByPk(bookingId);
       if (!booking) return res.status(400).json({ data: "Booking Not Found!" });
-      if (booking.status !== "complete") {
+      if (booking.status !== "complete" || booking.status !== "cancelled") {
         try {
+          const car = await db.car.findByPk(booking.car_id);
           const t = await db.sequelize.transaction();
           await db.booking.destroy({
             where: { id: bookingId },
             transaction: t,
           });
           await db.car.update(
-            { booked: 0 },
+            { booked: 0, qty: car.qty + 1 },
             { where: { id: booking.car_id }, transaction: t }
           );
           await t.commit();
@@ -314,11 +315,21 @@ module.exports = {
 
   deleteAllBookings: async (req, res) => {
     try {
+      const t = await db.sequelize.transaction();
       const bookings = await db.booking.findAll({ raw: true });
+      const cars = await db.car.findAll({
+        attributes: ["id", "saved_qty"],
+        raw: true,
+      });
       if (bookings.length === 0)
         return res.status(404).json({ data: "No Bookings Found!" });
       await db.booking.destroy({ where: {} });
-      await db.car.update({ booked: 0 }, { where: {} });
+      cars.forEach(async (car) => {
+        await db.car.update(
+          { booked: 0, qty: car.saved_qty },
+          { where: { id: car.id } }
+        );
+      });
       return res.status(200).json({ data: "All Bookings Deleted!" });
     } catch (error) {
       return res.status(200).json({ data: error.message });

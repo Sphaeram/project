@@ -14,7 +14,7 @@ const allowedFields = [
   "seating_capacity",
   "luggage_capacity",
   "image",
-  "qty",
+  "saved_qty",
 ];
 
 module.exports = {
@@ -43,6 +43,7 @@ module.exports = {
         return res.status(400).json({ data: "Bad Request!" });
       }
 
+      sanitizedFields.qty = sanitizedFields.saved_qty;
       const car = await db.car.create(sanitizedFields);
       return res.status(200).json({ data: car });
     } catch (error) {
@@ -115,8 +116,17 @@ module.exports = {
     try {
       const car = await db.car.findByPk(carId);
       if (!car) return res.status(404).json({ data: "Car not found!" });
-
-      await db.car.update({ booked: status }, { where: { id: carId } });
+      if (status) {
+        await db.car.update(
+          { booked: status, qty: 0 },
+          { where: { id: carId } }
+        );
+      } else {
+        await db.car.update(
+          { booked: status, qty: car.saved_qty },
+          { where: { id: carId } }
+        );
+      }
 
       return res.status(200).json({ data: "status updated!" });
     } catch (error) {
@@ -158,7 +168,7 @@ module.exports = {
     try {
       const car = await db.car.findByPk(carId, { raw: true });
       if (!car) return res.status(404).json({ data: "No Car Found!" });
-      if (car.booked)
+      if (car.booked || car.qty > 0)
         return res
           .status(403)
           .json({ data: "Car is booked and can't be deleted!" });

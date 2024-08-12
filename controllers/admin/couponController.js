@@ -61,6 +61,13 @@ module.exports = {
         return res.status(404).json({ data: "No Coupons Found!" });
 
       coupons.forEach((coupon) => {
+        if (
+          moment(coupon.valid_from)
+            .tz(TIME_ZONE)
+            .isBefore(moment().tz(TIME_ZONE))
+        ) {
+          coupon.status = "inactive";
+        }
         coupon.valid_from = moment(coupon.valid_from)
           .tz(TIME_ZONE)
           .format("YYYY-MM-DD");

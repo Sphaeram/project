@@ -91,6 +91,7 @@ module.exports = {
         deleteFile(sanitizedFields.image);
         return res.status(404).json({ data: "Car Not Found!" });
       }
+
       sanitizedFields.saved_qty = parseInt(sanitizedFields.saved_qty);
       if (
         sanitizedFields.saved_qty &&
@@ -114,6 +115,7 @@ module.exports = {
         sanitizedFields.saved_qty > car.saved_qty
       ) {
         sanitizedFields.qty = car.qty + (sanitizedFields.saved_qty - car.qty);
+        sanitizedFields.booked = 0;
       }
 
       sanitizedFields.qty = await db.car.update(sanitizedFields, {
@@ -194,7 +196,7 @@ module.exports = {
     try {
       const car = await db.car.findByPk(carId, { raw: true });
       if (!car) return res.status(404).json({ data: "No Car Found!" });
-      if (car.booked || car.qty > 0)
+      if (car.booked || car.qty !== car.saved_qty)
         return res
           .status(403)
           .json({ data: "Car is booked and can't be deleted!" });

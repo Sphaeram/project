@@ -67,6 +67,8 @@ module.exports = {
             .isBefore(moment().tz(TIME_ZONE).startOf("day"))
         ) {
           coupon.status = "inactive";
+        } else {
+          coupon.status = "active";
         }
         coupon.valid_from = moment(coupon.valid_from)
           .tz(TIME_ZONE)

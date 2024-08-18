@@ -64,7 +64,7 @@ module.exports = {
         if (
           moment(coupon.valid_from)
             .tz(TIME_ZONE)
-            .isBefore(moment().tz(TIME_ZONE))
+            .isBefore(moment().tz(TIME_ZONE).startOf("day"))
         ) {
           coupon.status = "inactive";
         }

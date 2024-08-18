@@ -6,6 +6,6 @@ const router = require("express").Router();
 
 router.post("/check-coupon", verifyLogin, couponController.checkCouponByCode);
 
-router.get("/check-coupon", verifyLogin, verifyCoupon);
+router.get("/check-coupon", verifyCoupon);
 
 module.exports = router;

@@ -128,9 +128,11 @@ module.exports = {
 
   verifyCoupon: async (req, res) => {
     const { coupon } = req.query;
+    let id = 0;
+    if (req.user && req.user.id) id = req.user.id;
     if (!coupon) return res.status(400).json({ data: "Bad Request!" });
     try {
-      const couponResult = await checkCoupon(req.user.id, coupon);
+      const couponResult = await checkCoupon(id, coupon);
       if (couponResult.status && couponResult.message)
         return res
           .status(couponResult.status)

@@ -4,7 +4,10 @@ const { TIME_ZONE } = require("./constants");
 
 const checkCoupon = async (user_id, coupon) => {
   try {
-    const foundCoupon = await db.coupon.findOne({ where: { code: coupon }, raw: true });
+    const foundCoupon = await db.coupon.findOne({
+      where: { code: coupon },
+      raw: true,
+    });
     if (!foundCoupon) return { status: 404, message: "Coupon Not Found!" };
 
     const validFrom = moment(foundCoupon.valid_from).tz(TIME_ZONE);
@@ -20,21 +23,32 @@ const checkCoupon = async (user_id, coupon) => {
       };
     }
 
-    if (currentDate.isAfter(validTo)) return { status: 403, message: "Coupon has Expired!" };
+    if (currentDate.isAfter(validTo))
+      return { status: 403, message: "Coupon has Expired!" };
 
-    const couponsUsed = await db.coupon_collected.findAll({
-      where: { coupon_id: foundCoupon.id, user_id: user_id },
-      raw: true,
-    });
+    if (user_id) {
+      const couponsUsed = await db.coupon_collected.findAll({
+        where: { coupon_id: foundCoupon.id, user_id: user_id },
+        raw: true,
+      });
 
-    if (couponsUsed.length === 0 || couponsUsed.length < foundCoupon.uses_per_user) {
-      foundCoupon.valid_from = moment
-        .utc(foundCoupon.valid_from)
-        .tz(TIME_ZONE)
-        .format("YYYY-MM-DD");
-      foundCoupon.valid_to = moment.utc(foundCoupon.valid_to).tz(TIME_ZONE).format("YYYY-MM-DD");
-      return foundCoupon;
-    } else return { status: 403, message: "You already used this coupon!" };
+      if (
+        couponsUsed.length === 0 ||
+        couponsUsed.length < foundCoupon.uses_per_user
+      ) {
+        foundCoupon.valid_from = moment
+          .utc(foundCoupon.valid_from)
+          .tz(TIME_ZONE)
+          .format("YYYY-MM-DD");
+        foundCoupon.valid_to = moment
+          .utc(foundCoupon.valid_to)
+          .tz(TIME_ZONE)
+          .format("YYYY-MM-DD");
+        return foundCoupon;
+      } else return { status: 403, message: "You already used this coupon!" };
+    } else {
+      return { status: 200, message: "Coupon is Valid!" };
+    }
   } catch (error) {
     return { status: 500, message: error.message };
   }

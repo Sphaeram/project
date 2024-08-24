@@ -2,7 +2,11 @@ const db = require("../models");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { sanitizeFields } = require("../utils/otherUtils");
-const { ACCESS_TOKEN_SECRET } = require("../utils/constants");
+const {
+  ACCESS_TOKEN_SECRET,
+  MAIL_SENDING_EMAIL,
+} = require("../utils/constants");
+const { transporter } = require("../utils/email");
 
 module.exports = {
   signUp: async (req, res, next) => {
@@ -132,6 +136,48 @@ module.exports = {
       );
 
       return res.status(200).json({ data: "Password Changed Successfully!" });
+    } catch (error) {
+      return res.status(500).json({ data: error.message });
+    }
+  },
+
+  resetPassword: async (req, res) => {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ data: "Email is Required!" });
+
+    try {
+      const user = await db.user.findOne({
+        where: { email: email?.toLowerCase() },
+        raw: true,
+      });
+      if (!user) return res.status(404).json({ data: "Email Not Registered!" });
+
+      const password = Math.random().toString(36).substring(2, 10);
+      const salt = bcrypt.genSaltSync(10);
+      const hashedPassword = bcrypt.hashSync(password, salt);
+
+      await db.user.update(
+        { password: hashedPassword },
+        { where: { id: user.id } }
+      );
+
+      // Send email with new password
+      let options = {
+        from: MAIL_SENDING_EMAIL,
+        to: user.email,
+        subject: "Reset Password",
+        html: `Here is your new password:\n${password}`,
+      };
+
+      transporter.sendMail(options, (error, info) => {
+        if (error) {
+          console.log("Error in Sending Email for resetting password!");
+        } else {
+          console.log("Reset Password Email sent!");
+        }
+      });
+
+      return res.status(200).json("Password Reset!");
     } catch (error) {
       return res.status(500).json({ data: error.message });
     }

@@ -5,6 +5,7 @@ const {
   convertToJpeg,
 } = require("../../utils/otherUtils");
 const path = require("path");
+const { Op } = require("sequelize");
 
 const allowedFields = [
   "type",
@@ -164,11 +165,14 @@ module.exports = {
 
   getAllCars: async (req, res, next) => {
     try {
-      const cars = await db.car.findAll();
+      const cars = await db.car.findAll({
+        order: [["seating_capacity", "DESC"]],
+        raw: true,
+      });
       if (!cars || cars.length === 0)
         return res.status(404).json({ data: "No Cars Found!" });
 
-      return res.status(200).json({ data: cars?.reverse() });
+      return res.status(200).json({ data: cars });
     } catch (error) {
       return res.status(500).json({ data: error.message });
     }
